@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 99%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 240 10% 99%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 240 10% 99%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 220 13% 91%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 220 13% 91%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 47.4% 11.2%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 47.4% 11.2%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.main-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  z-index: 0;
+}
+
+.main-background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dark .main-background {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.dark .main-background-overlay {
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+}
+
+.light .main-background {
+  background-color: hsl(var(--background));
+}
+
+.light .main-background-overlay {
+  background: radial-gradient(circle at top left, rgba(129, 140, 248, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at bottom right, rgba(192, 132, 252, 0.1) 0%, transparent 50%);
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.glassmorphic {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.light .glassmorphic {
+  background: hsla(0, 0%, 100%, 0.4);
+  border: 1px solid hsla(0, 0%, 100%, 0.2);
+}
+
+.dark .glassmorphic {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glowing-border {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.glowing-border::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg at 50% 50%,
+    rgba(var(--primary), 0) 0%,
+    rgba(var(--primary), 0.5) 20%,
+    rgba(var(--primary), 0.5) 25%,
+    rgba(var(--primary), 0) 45%,
+    rgba(var(--primary), 0) 50%,
+    rgba(var(--primary), 0.5) 70%,
+    rgba(var(--primary), 0.5) 75%,
+    rgba(var(--primary), 0) 95%,
+    rgba(var(--primary), 0) 100%
+  );
+  animation: rotate 4s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hide Tawk.to chat on mobile */
+@media (max-width: 767px) {
+  #tawk-chatbot-container {
+    display: none !important;
+  }
+}
