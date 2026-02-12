@@ -32,7 +32,7 @@ export const CurrencyProvider = ({ children }) => {
   useEffect(() => {
     const fetchRates = async () => {
       try {
-        const response = await fetch('https://api.coingecko.com/api/v3/exchange_rates?x_cg_demo_api_key=CG-QSQc3jW1Mxdj9tpxPz3P51GN');
+        const response = await fetch('https://api.coingecko.com/api/v3/exchange_rates');
         if (!response.ok) throw new Error('Failed to fetch rates');
         const data = await response.json();
         const rates = { usd: 1 };
