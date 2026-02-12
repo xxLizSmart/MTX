@@ -154,19 +154,18 @@ const Trading = () => {
         }
         
         const profitOrLoss = win ? tradeAmount * (selectedOption?.win_rate || 0.8) : -(tradeAmount * (selectedOption?.loss_rate || 1));
-        
+
         const { error: txError } = await supabase.from('transactions').insert({
             user_id: user.id,
-            type: win ? 'trade_win' : 'trade_loss',
-            amount: Math.abs(profitOrLoss),
-            currency: selectedBalanceCurrency,
-            status: 'completed',
-            details: {
-                duration: tradeDuration,
-                asset: activeSymbol,
-                initial_amount: tradeAmount,
-                outcome: win ? 'win' : 'loss'
-            }
+            type: 'trade',
+            status: win ? 'win' : 'loss',
+            from_symbol: selectedBalanceCurrency,
+            to_symbol: selectedBalanceCurrency,
+            from_amount: tradeAmount,
+            to_amount: profitOrLoss,
+            fee: 0,
+            price: cryptoAssets[activeSymbol]?.price || 0,
+            notes: `${tradeDuration}s trade on ${activeSymbol.toUpperCase()} - ${win ? 'WIN' : 'LOSS'}`
         });
 
         if (txError) console.error("Transaction log error", txError);

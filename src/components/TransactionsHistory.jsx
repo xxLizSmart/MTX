@@ -94,10 +94,10 @@ const TransactionsHistory = () => {
             case 'withdraw':
                 return `Withdrawal of ${tx.amount} ${tx.currency}`;
             case 'swap':
-                return `Swapped ${tx.from_amount} ${tx.from_currency} for ${parseFloat(tx.to_amount).toFixed(4)} ${tx.to_currency}`;
+                return `Swapped ${tx.from_amount} ${tx.from_symbol} for ${parseFloat(tx.to_amount).toFixed(4)} ${tx.to_symbol}`;
             case 'trade':
                 const outcome = tx.status === 'win' ? 'Profit' : 'Loss';
-                return `Trade: ${outcome} of ${Math.abs(tx.to_amount).toFixed(4)} ${tx.to_currency}`;
+                return `Trade: ${outcome} of ${Math.abs(tx.to_amount).toFixed(4)} ${tx.to_symbol}`;
             default:
                 return 'Transaction';
         }
