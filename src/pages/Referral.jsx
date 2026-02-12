@@ -17,6 +17,7 @@ const Referral = () => {
     const { toast } = useToast();
     const [referralCode, setReferralCode] = useState('');
     const [referrals, setReferrals] = useState([]);
+    const [totalRewards, setTotalRewards] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -32,7 +33,7 @@ const Referral = () => {
 
                 const { data: referralData, error: referralsError } = await supabase
                     .from('referrals')
-                    .select('created_at, referred_id')
+                    .select('created_at, referred_id, reward_amount, status')
                     .eq('referrer_id', user.id);
 
                 const referralsWithNames = await Promise.all((referralData || []).map(async (ref) => {
@@ -40,7 +41,7 @@ const Referral = () => {
                         .from('profiles')
                         .select('id, first_name, last_name')
                         .eq('id', ref.referred_id)
-                        .single();
+                        .maybeSingle();
                     return { ...ref, referee: profile };
                 }));
 
@@ -53,6 +54,8 @@ const Referral = () => {
                     });
                 } else {
                     setReferrals(referralsWithNames);
+                    const rewards = (referralData || []).reduce((sum, r) => sum + (parseFloat(r.reward_amount) || 0), 0);
+                    setTotalRewards(rewards);
                 }
                 
                 setLoading(false);
@@ -119,8 +122,8 @@ const Referral = () => {
                                 <Award className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">$0.00</div>
-                                <p className="text-xs text-muted-foreground">Commission feature coming soon!</p>
+                                <div className="text-2xl font-bold">{loading ? <Loader2 className="animate-spin h-6 w-6" /> : `$${totalRewards.toFixed(2)}`}</div>
+                                <p className="text-xs text-muted-foreground">earned from referrals.</p>
                             </CardContent>
                         </Card>
                     </div>

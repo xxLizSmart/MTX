@@ -15,12 +15,7 @@ const Notifications = () => {
 
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
-    
-    // In a real Supabase app, you would fetch from a 'notifications' table
-    // For now, we'll simulate empty or mock notifications if the table doesn't exist
-    // or implement a basic fetch if you have a notifications table.
-    // Assuming a simple structure for now or returning empty to prevent errors.
-    
+
     try {
         const { data, error } = await supabase
             .from('notifications')
@@ -29,14 +24,11 @@ const Notifications = () => {
             .order('created_at', { ascending: false })
             .limit(10);
 
-        if (error) {
-            // Table might not exist yet, just ignore
-            return;
-        }
+        if (error) return;
 
         if (data) {
             setNotifications(data);
-            const unread = data.filter(n => !n.is_read).length;
+            const unread = data.filter(n => !n.read).length;
             setUnreadCount(unread);
         }
     } catch (e) {
@@ -53,7 +45,7 @@ const Notifications = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-        await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+        await supabase.from('notifications').update({ read: true }).eq('id', id);
         fetchNotifications();
     } catch (e) {
         console.error("Error marking as read", e);
@@ -62,7 +54,7 @@ const Notifications = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-        await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id);
+        await supabase.from('notifications').update({ read: true }).eq('user_id', user.id);
         fetchNotifications();
     } catch (e) {
         console.error("Error marking all as read", e);
@@ -96,9 +88,9 @@ const Notifications = () => {
         <DropdownMenuSeparator />
         {notifications.length > 0 ? (
           notifications.map(n => (
-            <DropdownMenuItem key={n.id} className={`flex items-start gap-3 p-2 ${!n.is_read ? 'bg-primary/5' : ''}`} onSelect={(e) => { e.preventDefault(); if(!n.is_read) handleMarkAsRead(n.id)}}>
+            <DropdownMenuItem key={n.id} className={`flex items-start gap-3 p-2 ${!n.read ? 'bg-primary/5' : ''}`} onSelect={(e) => { e.preventDefault(); if(!n.read) handleMarkAsRead(n.id)}}>
               <div className="mt-1">
-                {!n.is_read ? <Badge variant="success" className="h-2 w-2 p-0" /> : <Mail className="h-4 w-4 text-muted-foreground" />}
+                {!n.read ? <Badge variant="success" className="h-2 w-2 p-0" /> : <Mail className="h-4 w-4 text-muted-foreground" />}
               </div>
               <div className="flex-1">
                 <p className="font-semibold">{n.title}</p>

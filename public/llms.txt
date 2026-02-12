@@ -1,7 +1,6 @@
 ## Pages
 - [- MetaTradeX](/assets): No description available
 - [- MetaTradeX](/coinswapper): No description available
-- [- MetaTradeX](/dashboard): No description available
 - [- MetaTradeX](/kyc): No description available
 - [- MetaTradeX](/login): No description available
 - [- MetaTradeX](/portfolio): No description available
