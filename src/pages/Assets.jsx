@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import Autoplay from "embla-carousel-autoplay"
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
@@ -12,23 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Loader2, Edit } from 'lucide-react';
-
-const promoBanners = [
-  {
-    id: 1,
-    imageUrl: 'https://horizons-cdn.hostinger.com/911b6dd9-a6dc-482b-b727-f1a7cb5e689b/2b2f61d702d0e5c4532fcb7bf4935412.png',
-    title: 'MetaTradeX Cashback Bonus',
-    description: '10% Cashback on Every $20,000 Traded. MetaTradeX offers a 10% cashback reward to users on their trading volume. For every cumulative $20,000 in trades you execute on the platform, you will receive a cashback bonus. This bonus is calculated as 10% of that $20,000, which equals a $2,000 reward. This is an incentive for active traders, providing them with a direct return on their trading activity.'
-  },
-  {
-    id: 2,
-    imageUrl: 'https://horizons-cdn.hostinger.com/911b6dd9-a6dc-482b-b727-f1a7cb5e689b/1088d86d7f1ffe06bafbf7efd1f6a051.png',
-    title: 'MetaTradeX KYC Bonus: Get $15 FREE with Primary Verification!',
-    description: 'This is a welcome bonus promotion designed to encourage new users to complete the initial identity verification process. When you successfully complete the "Primary Verification" steps on the platform, you will be rewarded with a $15 bonus that is credited directly to your account. This is a one-time reward for each user and is an easy way to get some free funds just for completing a necessary security step.'
-  }
-];
 
 const Assets = () => {
     const { t } = useLanguage();
@@ -41,11 +24,6 @@ const Assets = () => {
     const [loading, setLoading] = useState(true);
     const [editingAsset, setEditingAsset] = useState(null);
     const [newPrice, setNewPrice] = useState('');
-    const [selectedPromo, setSelectedPromo] = useState(null);
-
-    const plugin = useRef(
-      Autoplay({ delay: 3000, stopOnInteraction: true })
-    )
 
     const fetchAssets = useCallback(async () => {
         setLoading(true);
@@ -108,32 +86,6 @@ const Assets = () => {
                 <title>{t('assets')} - MetaTradeX</title>
             </Helmet>
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-
-                <div className="mb-8">
-                  <Carousel
-                    plugins={[plugin.current]}
-                    opts={{
-                      align: "start",
-                      loop: true,
-                    }}
-                    className="w-full"
-                    onMouseEnter={plugin.current.stop}
-                    onMouseLeave={plugin.current.reset}
-                  >
-                    <CarouselContent>
-                      {promoBanners.map((promo) => (
-                        <CarouselItem key={promo.id} onClick={() => setSelectedPromo(promo)} className="cursor-pointer flex justify-center items-center">
-                            <div className="flex items-center justify-center" style={{ width: '844.4px', height: '403.6px' }}>
-                              <img src={promo.imageUrl} alt={promo.title} className="w-full h-full object-contain" />
-                            </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="hidden sm:flex" />
-                    <CarouselNext className="hidden sm:flex" />
-                  </Carousel>
-                </div>
-
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <h1 className="text-3xl font-bold">{t('topCryptos')}</h1>
                     <div className="w-full sm:w-auto sm:max-w-xs">
@@ -207,21 +159,6 @@ const Assets = () => {
                         <Button onClick={handleUpdatePrice} disabled={loading}>
                             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Update Price'}
                         </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            <Dialog open={!!selectedPromo} onOpenChange={() => setSelectedPromo(null)}>
-                <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>{selectedPromo?.title}</DialogTitle>
-                    </DialogHeader>
-                    <div className="py-4 space-y-4">
-                        <img src={selectedPromo?.imageUrl} alt={selectedPromo?.title} className="w-full h-auto rounded-lg object-contain" />
-                        <DialogDescription>{selectedPromo?.description}</DialogDescription>
-                    </div>
-                    <DialogFooter>
-                        <Button onClick={() => setSelectedPromo(null)}>Close</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
