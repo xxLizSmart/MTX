@@ -32,8 +32,17 @@ const Referral = () => {
 
                 const { data: referralData, error: referralsError } = await supabase
                     .from('referrals')
-                    .select('created_at, referee:referee_id(id, first_name, last_name)')
+                    .select('created_at, referred_id')
                     .eq('referrer_id', user.id);
+
+                const referralsWithNames = await Promise.all((referralData || []).map(async (ref) => {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('id, first_name, last_name')
+                        .eq('id', ref.referred_id)
+                        .single();
+                    return { ...ref, referee: profile };
+                }));
 
                 if (referralsError) {
                     console.error('Error fetching referrals:', referralsError);
@@ -43,7 +52,7 @@ const Referral = () => {
                         description: referralsError.message,
                     });
                 } else {
-                    setReferrals(referralData || []);
+                    setReferrals(referralsWithNames);
                 }
                 
                 setLoading(false);

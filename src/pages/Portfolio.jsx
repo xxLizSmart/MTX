@@ -29,16 +29,16 @@ const Portfolio = () => {
         try {
             const [
                 { data: balances, error: balanceError },
-                { data: mockAssets, error: mockAssetsError }
+                { data: assetsData, error: assetsError }
             ] = await Promise.all([
                 supabase.from('user_assets').select('symbol, amount').eq('user_id', user.id),
                 supabase.from('assets').select('symbol, price, icon_url, name')
             ]);
 
             if (balanceError) throw balanceError;
-            if (mockAssetsError) throw mockAssetsError;
+            if (assetsError) throw assetsError;
 
-            const prices = (mockAssets || []).reduce((acc, asset) => {
+            const prices = (assetsData || []).reduce((acc, asset) => {
                 acc[asset.symbol] = { price: asset.price, icon: asset.icon_url, name: asset.name };
                 return acc;
             }, {});

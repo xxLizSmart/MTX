@@ -30,8 +30,8 @@ const CoinSwapper = () => {
                 { data: assetsData, error: assetsError },
                 { data: balancesData, error: balancesError }
             ] = await Promise.all([
-                supabase.from('mock_assets').select('*'),
-                supabase.from('balances').select('currency, amount').eq('user_id', user.id)
+                supabase.from('assets').select('*'),
+                supabase.from('user_assets').select('symbol, amount').eq('user_id', user.id)
             ]);
 
             if (assetsError) throw assetsError;
@@ -44,7 +44,7 @@ const CoinSwapper = () => {
             }
 
             const balancesMap = balancesData.reduce((acc, bal) => {
-                acc[bal.currency] = bal.amount;
+                acc[bal.symbol] = bal.amount;
                 return acc;
             }, {});
             setBalances(balancesMap);
@@ -83,15 +83,28 @@ const CoinSwapper = () => {
         }
 
         try {
-            const { error } = await supabase.rpc('swap_assets', {
-                p_user_id: user.id,
-                p_from_currency: fromCoin,
-                p_to_currency: toCoin,
-                p_from_amount: fromAmount,
-                p_to_amount: toAmount
-            });
+            const { data: fromAsset } = await supabase.from('user_assets').select('*').eq('user_id', user.id).eq('symbol', fromCoin).single();
+            const { data: toAsset } = await supabase.from('user_assets').select('*').eq('user_id', user.id).eq('symbol', toCoin).maybeSingle();
 
-            if (error) throw error;
+            if (!fromAsset) throw new Error('Source asset not found');
+
+            await supabase.from('user_assets').update({ amount: parseFloat(fromAsset.amount) - parseFloat(fromAmount) }).eq('id', fromAsset.id);
+
+            if (toAsset) {
+                await supabase.from('user_assets').update({ amount: parseFloat(toAsset.amount) + parseFloat(toAmount) }).eq('id', toAsset.id);
+            } else {
+                await supabase.from('user_assets').insert({ user_id: user.id, symbol: toCoin, amount: toAmount });
+            }
+
+            await supabase.from('transactions').insert({
+                user_id: user.id,
+                type: 'swap',
+                status: 'completed',
+                from_symbol: fromCoin,
+                to_symbol: toCoin,
+                from_amount: fromAmount,
+                to_amount: toAmount
+            });
 
             toast({ title: 'Swap Successful!', description: `You swapped ${fromAmount} ${fromCoin} for ${toAmount} ${toCoin}.` });
             fetchAssetsAndBalances();

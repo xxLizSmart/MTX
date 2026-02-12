@@ -50,7 +50,7 @@ const Assets = () => {
     const fetchAssets = useCallback(async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase.from('mock_assets').select('*').order('id');
+            const { data, error } = await supabase.from('assets').select('*').order('id');
             if (error) throw error;
             setCryptos(data);
         } catch (error) {
@@ -77,7 +77,7 @@ const Assets = () => {
         }
         setLoading(true);
         const { error } = await supabase
-            .from('mock_assets')
+            .from('assets')
             .update({ price: parseFloat(newPrice) })
             .eq('id', editingAsset.id);
 
