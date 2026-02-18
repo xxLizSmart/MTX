@@ -14,26 +14,43 @@ import { Copy, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
 const Deposit = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [currency, setCurrency] = useState('USDT');
+  const [currency, setCurrency] = useState('USDT_TRC20');
   const [amount, setAmount] = useState('');
   const [proofFile, setProofFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const wallets = {
-    'USDT': {
-      address: 'TPebRFeKyyihDTfB7G9qKN2wS9pEamScfp',
+    'USDT_TRC20': {
+      label: 'TRC20 Primary',
+      address: 'TGiVATRc2m9gR8CrsWicdjT85eQduKdCv7',
       network: 'TRC20',
-      icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png'
+      currency: 'USDT',
+      icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
+      qr: 'https://horizons-cdn.hostinger.com/99b11fa1-2bd3-41b7-81bc-612ff4483c7a/7f0438f952703496b6f01200f958279c.jpg'
     },
-    'ETH': {
-      address: '0xb38d6b91749f53aca752fb0c2bda03d643739830',
-      network: 'ERC-20',
-      icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
+    'USDT_ERC20': {
+      label: 'ERC20 Primary (USDT)',
+      address: '0xaedebf28b3661d8266120f31008b8c6757079c1f',
+      network: 'ERC20',
+      currency: 'USDT',
+      icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
+      qr: 'https://horizons-cdn.hostinger.com/99b11fa1-2bd3-41b7-81bc-612ff4483c7a/d05c22c6c88a5782652e213b7bb8d315.jpg'
     },
     'BTC': {
-      address: '14gyyiVkfVAZRtx42miquQfr9j4GyTUJHH',
+      label: 'BTC Primary',
+      address: '1Mp5fM4Uti1Tw2yJXZq5FRNXWKpXLjuzY2',
       network: 'Bitcoin',
-      icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png'
+      currency: 'BTC',
+      icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+      qr: 'https://horizons-cdn.hostinger.com/99b11fa1-2bd3-41b7-81bc-612ff4483c7a/c23861a72c52e6439c69d99326bd4830.jpg'
+    },
+    'ETH': {
+      label: 'ETH Primary',
+      address: '0xaedebf28b3661d8266120f31008b8c6757079c1f',
+      network: 'ERC20',
+      currency: 'ETH',
+      icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+      qr: 'https://horizons-cdn.hostinger.com/99b11fa1-2bd3-41b7-81bc-612ff4483c7a/d05c22c6c88a5782'
     }
   };
 
@@ -74,7 +91,7 @@ const Deposit = () => {
       const { error: dbError } = await supabase.from('deposits').insert({
         user_id: user.id,
         amount: parseFloat(amount),
-        currency: currency,
+        currency: wallets[currency].currency,
         proof_url: publicUrl,
         status: 'pending'
       });
@@ -107,12 +124,12 @@ const Deposit = () => {
             <CardContent>
               <Select value={currency} onValueChange={setCurrency}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Currency" />
+                  <SelectValue placeholder="Select Network" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USDT">Tether (USDT) - TRC20</SelectItem>
-                  <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-                  <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
+                  {Object.entries(wallets).map(([key, w]) => (
+                    <SelectItem key={key} value={key}>{w.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </CardContent>
@@ -124,11 +141,19 @@ const Deposit = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-                <img src={wallets[currency].icon} alt={currency} className="w-12 h-12" />
+                <img src={wallets[currency].icon} alt={wallets[currency].currency} className="w-12 h-12" />
                 <div>
-                  <p className="font-bold">{currency}</p>
+                  <p className="font-bold">{wallets[currency].label}</p>
                   <p className="text-sm text-muted-foreground">Network: {wallets[currency].network}</p>
                 </div>
+              </div>
+
+              <div className="flex justify-center">
+                <img
+                  src={wallets[currency].qr}
+                  alt="QR Code"
+                  className="w-48 h-48 rounded-lg border border-border object-contain bg-white p-2"
+                />
               </div>
 
               <div className="space-y-2">
@@ -141,7 +166,7 @@ const Deposit = () => {
                 </div>
                 <p className="text-xs text-yellow-500 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
-                  Send only {currency} ({wallets[currency].network}) to this address.
+                  Send only {wallets[currency].currency} ({wallets[currency].network}) to this address.
                 </p>
               </div>
             </CardContent>
