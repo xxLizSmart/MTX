@@ -92,17 +92,15 @@ const Admin = () => {
 
       // Logic for approvals/rejections
       if (table === 'deposits' && status === 'approved' && extraData.userId) {
-          // Add balance
-          const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', extraData.userId).eq('symbol', extraData.currency).single();
+          const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', extraData.userId).eq('symbol', extraData.currency).maybeSingle();
           if (currentAsset) {
               await supabase.from('user_assets').update({ amount: parseFloat(currentAsset.amount) + parseFloat(extraData.amount) }).eq('id', currentAsset.id);
           } else {
               await supabase.from('user_assets').insert({ user_id: extraData.userId, symbol: extraData.currency, amount: extraData.amount });
           }
       } else if (table === 'withdrawals' && status === 'rejected' && extraData.userId) {
-          // Refund balance
-          const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', extraData.userId).eq('symbol', extraData.currency).single();
-           if (currentAsset) {
+          const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', extraData.userId).eq('symbol', extraData.currency).maybeSingle();
+          if (currentAsset) {
               await supabase.from('user_assets').update({ amount: parseFloat(currentAsset.amount) + parseFloat(extraData.amount) }).eq('id', currentAsset.id);
           }
       }

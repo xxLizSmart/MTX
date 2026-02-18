@@ -170,11 +170,15 @@ const Trading = () => {
 
         if (txError) console.error("Transaction log error", txError);
 
-        const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', user.id).eq('symbol', selectedBalanceCurrency).single();
-        
+        const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', user.id).eq('symbol', selectedBalanceCurrency).maybeSingle();
+
         if (currentAsset) {
-            const newAmount = parseFloat(currentAsset.amount) + profitOrLoss;
+            const newAmount = Math.max(0, parseFloat(currentAsset.amount) + profitOrLoss);
             await supabase.from('user_assets').update({ amount: newAmount }).eq('id', currentAsset.id);
+        } else {
+            if (profitOrLoss > 0) {
+                await supabase.from('user_assets').insert({ user_id: user.id, symbol: selectedBalanceCurrency, amount: profitOrLoss });
+            }
         }
 
         setTradeResult({ win, profit: profitOrLoss, currency: selectedBalanceCurrency });
