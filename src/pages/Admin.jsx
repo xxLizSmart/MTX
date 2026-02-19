@@ -32,6 +32,7 @@ const Admin = () => {
   const [editUser, setEditUser] = useState(null);
   const [userBalances, setUserBalances] = useState([]);
   const [editSetting, setEditSetting] = useState(null);
+  const [newBalanceSymbol, setNewBalanceSymbol] = useState('');
 
   const fetchData = useCallback(async () => {
     if (!session) return;
@@ -78,33 +79,86 @@ const Admin = () => {
     }
   }, [fetchData, session]);
 
+  const handleDepositWithdrawalAction = async (table, id, action) => {
+    const rpcName = `${action}_${table === 'deposits' ? 'deposit' : 'withdrawal'}`;
+    const paramName = table === 'deposits' ? 'p_deposit_id' : 'p_withdrawal_id';
+
+    const { data, error } = await supabase.rpc(rpcName, {
+      [paramName]: id,
+      p_admin_id: session.user.id,
+    });
+
+    if (error) throw error;
+    if (data && !data.success) throw new Error(data.error);
+    return data;
+  };
+
+  const updateUserBalance = async (userId, symbol, amountToAdd) => {
+    const { data: currentAsset } = await supabase
+      .from('user_assets')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('symbol', symbol)
+      .maybeSingle();
+
+    if (currentAsset) {
+      const { error } = await supabase
+        .from('user_assets')
+        .update({ amount: parseFloat(currentAsset.amount) + parseFloat(amountToAdd) })
+        .eq('id', currentAsset.id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from('user_assets')
+        .insert({ user_id: userId, symbol: symbol, amount: parseFloat(amountToAdd) });
+      if (error) throw error;
+    }
+  };
+
   const handleUpdateStatus = async (table, id, status, extraData = {}) => {
     if (!session) return;
     setLoading(true);
     try {
-      let updateData = { status };
       if (table === 'profiles') {
-          updateData = { kyc_status: status };
+        const { error } = await supabase.from(table).update({ kyc_status: status }).eq('id', id);
+        if (error) throw error;
+        toast({ title: "Success", description: `Status updated to ${status}` });
+        await fetchData();
+        setLoading(false);
+        return;
       }
-      
-      const { error } = await supabase.from(table).update(updateData).eq('id', id);
+
+      if (table === 'deposits' || table === 'withdrawals') {
+        const action = status === 'approved' ? 'approve' : 'reject';
+        try {
+          await handleDepositWithdrawalAction(table, id, action);
+          toast({ title: "Success", description: `Status updated to ${status}` });
+          await fetchData();
+          setLoading(false);
+          return;
+        } catch (rpcError) {
+          if (rpcError?.code === 'PGRST202') {
+            let updateData = { status, reviewed_by: session.user.id, reviewed_at: new Date().toISOString() };
+            const { error } = await supabase.from(table).update(updateData).eq('id', id);
+            if (error) throw error;
+
+            if (table === 'deposits' && status === 'approved' && extraData.userId) {
+              await updateUserBalance(extraData.userId, extraData.currency, extraData.amount);
+            } else if (table === 'withdrawals' && status === 'rejected' && extraData.userId) {
+              await updateUserBalance(extraData.userId, extraData.currency, extraData.amount);
+            }
+
+            toast({ title: "Success", description: `Status updated to ${status}` });
+            await fetchData();
+            setLoading(false);
+            return;
+          }
+          throw rpcError;
+        }
+      }
+
+      const { error } = await supabase.from(table).update({ status }).eq('id', id);
       if (error) throw error;
-
-      // Logic for approvals/rejections
-      if (table === 'deposits' && status === 'approved' && extraData.userId) {
-          const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', extraData.userId).eq('symbol', extraData.currency).maybeSingle();
-          if (currentAsset) {
-              await supabase.from('user_assets').update({ amount: parseFloat(currentAsset.amount) + parseFloat(extraData.amount) }).eq('id', currentAsset.id);
-          } else {
-              await supabase.from('user_assets').insert({ user_id: extraData.userId, symbol: extraData.currency, amount: extraData.amount });
-          }
-      } else if (table === 'withdrawals' && status === 'rejected' && extraData.userId) {
-          const { data: currentAsset } = await supabase.from('user_assets').select('*').eq('user_id', extraData.userId).eq('symbol', extraData.currency).maybeSingle();
-          if (currentAsset) {
-              await supabase.from('user_assets').update({ amount: parseFloat(currentAsset.amount) + parseFloat(extraData.amount) }).eq('id', currentAsset.id);
-          }
-      }
-
       toast({ title: "Success", description: `Status updated to ${status}` });
       await fetchData();
     } catch (error) {
@@ -132,6 +186,19 @@ const Admin = () => {
       toast({ variant: "destructive", title: "Update failed", description: error.message });
     } else {
       toast({ title: "Success", description: "Balance updated" });
+      handleOpenUserEdit(editUser);
+    }
+  };
+
+  const handleAddBalance = async () => {
+    if (!editUser || !newBalanceSymbol.trim()) return;
+    const symbol = newBalanceSymbol.trim().toUpperCase();
+    const { error } = await supabase.from('user_assets').insert({ user_id: editUser.id, symbol, amount: 0 });
+    if (error) {
+      toast({ variant: "destructive", title: "Add failed", description: error.message });
+    } else {
+      toast({ title: "Success", description: `${symbol} balance added` });
+      setNewBalanceSymbol('');
       handleOpenUserEdit(editUser);
     }
   };
@@ -425,6 +492,10 @@ const Admin = () => {
                 <Input type="number" defaultValue={balance.amount} onBlur={(e) => handleUpdateUserBalance(balance.id, e.target.value)} />
               </div>
             ))}
+            <div className="flex items-center gap-2 pt-2">
+              <Input placeholder="Symbol (e.g. BTC)" value={newBalanceSymbol} onChange={(e) => setNewBalanceSymbol(e.target.value)} className="w-40" />
+              <Button variant="outline" size="sm" onClick={handleAddBalance} disabled={!newBalanceSymbol.trim()}>Add Balance</Button>
+            </div>
             <h3 className="font-semibold pt-4">Trade Control</h3>
              <div className="p-3 rounded-md border bg-background/50 space-y-2">
                <div className="flex justify-between items-center">
