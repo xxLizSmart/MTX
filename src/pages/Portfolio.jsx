@@ -74,13 +74,16 @@ const Portfolio = () => {
         fetchPortfolioData();
         
         const channel = supabase.channel('realtime-portfolio')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'deposits', filter: `user_id=eq.${user?.id}` }, payload => {
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'user_assets', filter: `user_id=eq.${user?.id}` }, () => {
             fetchPortfolioData();
           })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'withdrawals', filter: `user_id=eq.${user?.id}` }, payload => {
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'deposits', filter: `user_id=eq.${user?.id}` }, () => {
             fetchPortfolioData();
           })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user?.id}` }, payload => {
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'withdrawals', filter: `user_id=eq.${user?.id}` }, () => {
+            fetchPortfolioData();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user?.id}` }, () => {
             fetchPortfolioData();
           })
           .subscribe();

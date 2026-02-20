@@ -87,11 +87,17 @@ const Deposit = () => {
 
       const { data: { publicUrl } } = supabase.storage.from('deposits').getPublicUrl(fileName);
 
-      // Create deposit record
+      const depositCurrency = wallets[currency].currency;
+
+      await supabase.from('user_assets').upsert(
+        { user_id: user.id, symbol: depositCurrency, amount: 0 },
+        { onConflict: 'user_id,symbol', ignoreDuplicates: true }
+      );
+
       const { error: dbError } = await supabase.from('deposits').insert({
         user_id: user.id,
         amount: parseFloat(amount),
-        currency: wallets[currency].currency,
+        currency: depositCurrency,
         proof_url: publicUrl,
         status: 'pending'
       });

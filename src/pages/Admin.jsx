@@ -79,39 +79,66 @@ const Admin = () => {
     }
   }, [fetchData, session]);
 
-  const handleDepositWithdrawalAction = async (table, id, action) => {
+  const callEdgeFunction = async (table, id, action) => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    const response = await fetch(`${supabaseUrl}/functions/v1/admin-approve`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentSession.access_token}`,
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ action, table, id }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Edge function failed');
+    }
+    return result;
+  };
+
+  const callRpcFunction = async (table, id, action) => {
     const rpcName = `${action}_${table === 'deposits' ? 'deposit' : 'withdrawal'}`;
     const paramName = table === 'deposits' ? 'p_deposit_id' : 'p_withdrawal_id';
-
     const { data, error } = await supabase.rpc(rpcName, {
       [paramName]: id,
       p_admin_id: session.user.id,
     });
-
     if (error) throw error;
     if (data && !data.success) throw new Error(data.error);
     return data;
   };
 
-  const updateUserBalance = async (userId, symbol, amountToAdd) => {
-    const { data: currentAsset } = await supabase
-      .from('user_assets')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('symbol', symbol)
-      .maybeSingle();
+  const directApproval = async (table, id, status, extraData) => {
+    const updateData = { status, reviewed_by: session.user.id, reviewed_at: new Date().toISOString() };
+    const { error } = await supabase.from(table).update(updateData).eq('id', id);
+    if (error) throw error;
 
-    if (currentAsset) {
-      const { error } = await supabase
+    const shouldAddBalance =
+      (table === 'deposits' && status === 'approved') ||
+      (table === 'withdrawals' && status === 'rejected');
+
+    if (shouldAddBalance && extraData.userId) {
+      const { data: currentAsset } = await supabase
         .from('user_assets')
-        .update({ amount: parseFloat(currentAsset.amount) + parseFloat(amountToAdd) })
-        .eq('id', currentAsset.id);
-      if (error) throw error;
-    } else {
-      const { error } = await supabase
-        .from('user_assets')
-        .insert({ user_id: userId, symbol: symbol, amount: parseFloat(amountToAdd) });
-      if (error) throw error;
+        .select('id, amount')
+        .eq('user_id', extraData.userId)
+        .eq('symbol', extraData.currency)
+        .maybeSingle();
+
+      if (currentAsset) {
+        const { error: balError } = await supabase
+          .from('user_assets')
+          .update({ amount: parseFloat(currentAsset.amount) + parseFloat(extraData.amount) })
+          .eq('id', currentAsset.id);
+        if (balError) throw balError;
+      } else {
+        const { error: insError } = await supabase
+          .from('user_assets')
+          .insert({ user_id: extraData.userId, symbol: extraData.currency, amount: parseFloat(extraData.amount) });
+        if (insError) throw insError;
+      }
     }
   };
 
@@ -128,37 +155,18 @@ const Admin = () => {
         return;
       }
 
-      if (table === 'deposits' || table === 'withdrawals') {
-        const action = status === 'approved' ? 'approve' : 'reject';
+      const action = status === 'approved' ? 'approve' : 'reject';
+
+      try {
+        await callEdgeFunction(table, id, action);
+      } catch (edgeErr) {
         try {
-          await handleDepositWithdrawalAction(table, id, action);
-          toast({ title: "Success", description: `Status updated to ${status}` });
-          await fetchData();
-          setLoading(false);
-          return;
-        } catch (rpcError) {
-          if (rpcError?.code === 'PGRST202') {
-            let updateData = { status, reviewed_by: session.user.id, reviewed_at: new Date().toISOString() };
-            const { error } = await supabase.from(table).update(updateData).eq('id', id);
-            if (error) throw error;
-
-            if (table === 'deposits' && status === 'approved' && extraData.userId) {
-              await updateUserBalance(extraData.userId, extraData.currency, extraData.amount);
-            } else if (table === 'withdrawals' && status === 'rejected' && extraData.userId) {
-              await updateUserBalance(extraData.userId, extraData.currency, extraData.amount);
-            }
-
-            toast({ title: "Success", description: `Status updated to ${status}` });
-            await fetchData();
-            setLoading(false);
-            return;
-          }
-          throw rpcError;
+          await callRpcFunction(table, id, action);
+        } catch (rpcErr) {
+          await directApproval(table, id, status, extraData);
         }
       }
 
-      const { error } = await supabase.from(table).update({ status }).eq('id', id);
-      if (error) throw error;
       toast({ title: "Success", description: `Status updated to ${status}` });
       await fetchData();
     } catch (error) {
