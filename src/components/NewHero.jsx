@@ -12,8 +12,8 @@ const formatPriceCompact = (price) => {
   return price.toFixed(3);
 };
 
-const MiniChart = ({ color = '#22c55e' }) => (
-  <svg viewBox="0 0 60 30" className="w-12 h-6" fill="none">
+const MiniChart = ({ color = '#22c55e', className = '' }) => (
+  <svg viewBox="0 0 60 30" className={`fill-none ${className}`}>
     <path
       d={color === '#22c55e'
         ? 'M2 24 L8 20 L14 22 L20 16 L26 18 L32 12 L38 14 L44 8 L50 10 L56 4'
@@ -53,9 +53,9 @@ const NewHero = () => {
   };
 
   return (
-    <section className="relative hidden sm:block w-full overflow-hidden" style={{ background: 'linear-gradient(165deg, #0B0E1E 0%, #15192C 50%, #0B0E1E 100%)' }}>
+    <section className="relative w-full overflow-hidden" style={{ background: 'linear-gradient(165deg, #0B0E1E 0%, #15192C 50%, #0B0E1E 100%)' }}>
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <svg className="absolute -top-20 -right-20 w-[900px] h-[900px] opacity-[0.06]" viewBox="0 0 900 900" fill="none">
+        <svg className="absolute -top-20 -right-20 w-[900px] h-[900px] opacity-[0.06] hidden sm:block" viewBox="0 0 900 900" fill="none">
           <path d="M450 80 C680 140 800 340 740 560 C680 780 400 840 230 720 C60 600 -10 380 110 200 C230 20 380 10 450 80Z" stroke="#2563EB" strokeWidth="1.5" fill="none" />
           <path d="M470 110 C690 165 790 350 740 540 C690 730 420 790 260 685 C100 580 50 390 150 230 C250 70 400 55 470 110Z" stroke="#1D4ED8" strokeWidth="1" fill="none" opacity="0.4" />
           <path d="M490 150 C670 195 760 340 720 500 C680 660 440 710 300 620 C160 530 120 380 200 260 C280 140 420 120 490 150Z" stroke="#2563EB" strokeWidth="0.8" fill="none" opacity="0.2" />
@@ -64,16 +64,16 @@ const NewHero = () => {
         <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-blue-500/[0.03] blur-[120px]" />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 xl:py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 lg:gap-16 xl:gap-20 items-center">
+      <div className="relative container mx-auto px-6 lg:px-8 py-10 sm:py-16 lg:py-28 xl:py-32">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-16 xl:gap-20">
 
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
-            className="flex flex-col justify-center max-w-xl"
+            className="flex flex-col justify-center max-w-xl flex-1"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] font-bold leading-[1.12] tracking-tight text-white">
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] font-bold leading-[1.12] tracking-tight text-white">
               Beyond crypto.{' '}
               <br />
               Trade global assets{' '}
@@ -81,30 +81,30 @@ const NewHero = () => {
               with USDT.
             </h1>
 
-            <p className="mt-6 text-[#94A3B8] text-base sm:text-lg leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-[#94A3B8] text-sm sm:text-lg leading-relaxed">
               Sign up now to claim a welcome pack worth{' '}
               <span className="text-[#2563EB] font-semibold">6200 USDT</span>
             </p>
 
-            <form onSubmit={handleStart} className="mt-8 flex items-center max-w-md">
+            <form onSubmit={handleStart} className="mt-6 sm:mt-8 flex items-center max-w-md">
               <div className="relative flex-1">
                 <input
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email/Phone number"
-                  className="w-full h-12 pl-4 pr-4 rounded-l-lg bg-[#141824] border border-[#1E293B] border-r-0 text-white placeholder-[#64748B] text-sm focus:outline-none focus:border-[#2563EB] transition-colors"
+                  className="w-full h-12 pl-4 pr-4 rounded-l-lg bg-[#141824] border border-[#1E293B] border-r-0 text-white placeholder-[#64748B] text-[16px] sm:text-sm focus:outline-none focus:border-[#2563EB] transition-colors"
                 />
               </div>
               <button
                 type="submit"
-                className="h-12 px-6 sm:px-8 rounded-r-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm whitespace-nowrap transition-colors"
+                className="h-12 px-5 sm:px-8 rounded-r-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm whitespace-nowrap transition-colors min-h-[44px]"
               >
                 Start now
               </button>
             </form>
 
-            <div className="mt-8 flex items-center gap-6 text-[#64748B] text-xs">
+            <div className="mt-6 sm:mt-8 hidden sm:flex items-center gap-6 text-[#64748B] text-xs">
               <span>Or continue with</span>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#141824] border border-[#1E293B] flex items-center justify-center cursor-pointer hover:border-[#2563EB]/40 transition-colors">
@@ -117,12 +117,12 @@ const NewHero = () => {
             </div>
           </motion.div>
 
-          <div className="flex gap-4 lg:gap-5">
-            <div className="flex flex-col gap-4 lg:gap-5 w-[220px] xl:w-[240px]">
+          <div className="hidden lg:flex gap-5 shrink-0">
+            <div className="flex flex-col gap-5 w-[220px] xl:w-[240px]">
               <GlassCard delay={0.2} className="p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white font-semibold text-sm">Stocks</span>
-                  <MiniChart color={stock.change >= 0 ? '#22c55e' : '#ef4444'} />
+                  <MiniChart color={stock.change >= 0 ? '#22c55e' : '#ef4444'} className="w-12 h-6" />
                 </div>
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-[#94A3B8] text-xs">{stock.symbol}</span>
@@ -141,7 +141,7 @@ const NewHero = () => {
               <GlassCard delay={0.35} className="p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white font-semibold text-sm">TradFi</span>
-                  <MiniChart color={tradfi.change >= 0 ? '#22c55e' : '#ef4444'} />
+                  <MiniChart color={tradfi.change >= 0 ? '#22c55e' : '#ef4444'} className="w-12 h-6" />
                 </div>
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-[#94A3B8] text-xs">{tradfi.symbol}</span>
@@ -183,6 +183,66 @@ const NewHero = () => {
               </Link>
             </GlassCard>
           </div>
+
+          <div className="lg:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 w-max pb-1">
+              <GlassCard delay={0.2} className="p-4 w-[155px] shrink-0">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white font-semibold text-xs">Stocks</span>
+                  <MiniChart color={stock.change >= 0 ? '#22c55e' : '#ef4444'} className="w-10 h-5" />
+                </div>
+                <div className="flex items-baseline gap-1.5 mb-0.5">
+                  <span className="text-[#94A3B8] text-[10px]">{stock.symbol}</span>
+                  <span className={`text-[10px] ${stock.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}%
+                  </span>
+                </div>
+                <TickingValue className="text-white text-xl font-bold tracking-tight">
+                  {formatPriceCompact(stock.price)}
+                </TickingValue>
+              </GlassCard>
+
+              <GlassCard delay={0.3} className="p-4 w-[155px] shrink-0">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white font-semibold text-xs">TradFi</span>
+                  <MiniChart color={tradfi.change >= 0 ? '#22c55e' : '#ef4444'} className="w-10 h-5" />
+                </div>
+                <div className="flex items-baseline gap-1.5 mb-0.5">
+                  <span className="text-[#94A3B8] text-[10px]">{tradfi.symbol}</span>
+                  <span className={`text-[10px] ${tradfi.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {tradfi.change >= 0 ? '+' : ''}{tradfi.change.toFixed(2)}%
+                  </span>
+                </div>
+                <TickingValue className="text-white text-xl font-bold tracking-tight">
+                  {formatPriceCompact(tradfi.price)}
+                </TickingValue>
+              </GlassCard>
+
+              <GlassCard delay={0.4} className="p-4 w-[200px] shrink-0">
+                <span className="text-white font-semibold text-xs mb-2.5 block">Popular</span>
+                <div className="space-y-2">
+                  {popularAssets.slice(0, 4).map((asset) => (
+                    <div key={asset.symbol} className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <img src={asset.icon} alt={asset.symbol} className="w-5 h-5 rounded-full shrink-0" />
+                        <span className="text-white text-xs font-medium">{asset.symbol}</span>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-white text-xs font-medium">{formatPrice(asset.price)}</span>
+                        <span className={`block text-[10px] ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {asset.change >= 0 ? '+' : ''}{asset.change.toFixed(2)}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Link to="/assets" className="mt-2.5 text-[#94A3B8] text-[10px] hover:text-[#2563EB] transition-colors inline-flex items-center gap-1">
+                  Explore assets <ArrowRight className="w-2.5 h-2.5" />
+                </Link>
+              </GlassCard>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

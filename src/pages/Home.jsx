@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import NewHero from '@/components/NewHero';
-import MobileHero from '@/components/MobileHero';
 import TrustBanner from '@/components/home/TrustBanner';
 import FeaturesSection from '@/components/home/FeaturesSection';
 import HowItWorksSection from '@/components/home/HowItWorksSection';
@@ -25,7 +24,6 @@ const Home = () => {
       </Helmet>
       <div className="pb-24 overflow-hidden">
         <NewHero />
-        <MobileHero />
         <TrustBanner />
         <FeaturesSection />
         <HowItWorksSection />
