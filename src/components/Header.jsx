@@ -22,13 +22,6 @@ function useScroll(threshold) {
   return scrolled;
 }
 
-const publicLinks = [
-  { label: 'Markets', href: '/assets' },
-  { label: 'Trade', href: '/trading' },
-  { label: 'Features', href: '/features' },
-  { label: 'About', href: '/about' },
-];
-
 const loggedInLinks = [
   { label: 'Markets', href: '/assets' },
   { label: 'Trade', href: '/trading' },
@@ -64,8 +57,6 @@ const Header = () => {
     });
   }
 
-  const navLinks = user ? loggedInLinks : publicLinks;
-
   return (
     <header
       className={cn(
@@ -82,7 +73,7 @@ const Header = () => {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
+          {user && loggedInLinks.map((link) => (
             <NavLink
               key={link.label}
               to={link.href}
@@ -110,7 +101,6 @@ const Header = () => {
             </>
           ) : (
             <>
-              <div className="h-4 w-[1px] bg-slate-700 mx-2" />
               <Link to="/login" className="text-sm font-medium text-white hover:text-blue-400 transition-colors">
                 Sign In
               </Link>
@@ -136,7 +126,7 @@ const Header = () => {
             className="fixed inset-0 top-[64px] bg-[#0B0E1E] z-[90] md:hidden px-6 pt-10 overflow-y-auto"
           >
             <div className="flex flex-col gap-6">
-              {navLinks.map((link) => (
+              {user && loggedInLinks.map((link) => (
                 <NavLink
                   key={link.label}
                   to={link.href}
