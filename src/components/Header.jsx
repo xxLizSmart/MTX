@@ -2,19 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Sun, Moon, LogOut, KeyRound as UserRound, Globe, DollarSign,
-  Menu, X, Briefcase, Gift, Shield, TrendingUp,
+  LogOut, KeyRound as UserRound, Menu, X, Briefcase, Gift, Shield, TrendingUp, ArrowDownLeft,
 } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useCurrency } from '@/contexts/CurrencyContext';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
-  DropdownMenuRadioGroup, DropdownMenuRadioItem,
-} from '@/components/ui/dropdown-menu';
 import Notifications from '@/components/Notifications';
 import ProfileDropdown from '@/components/ProfileDropdown';
 import { cn } from '@/lib/utils';
@@ -30,7 +22,6 @@ function useScroll(threshold) {
   return scrolled;
 }
 
-
 const publicLinks = [
   { label: 'Markets', href: '/assets' },
   { label: 'Trade', href: '/trading' },
@@ -38,14 +29,18 @@ const publicLinks = [
   { label: 'About', href: '/about' },
 ];
 
+const loggedInLinks = [
+  { label: 'Markets', href: '/assets' },
+  { label: 'Trade', href: '/trading' },
+  { label: 'Portfolio', href: '/portfolio' },
+];
+
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const scrolled = useScroll(20);
-  const { theme, toggleTheme } = useTheme();
   const { user, userProfile, signOut } = useAuth();
   const navigate = useNavigate();
-  const { language, setLanguage, t } = useLanguage();
-  const { currency, setCurrency, currencies } = useCurrency();
+  const { t } = useLanguage();
 
   const handleLogout = useCallback(async () => {
     await signOut();
@@ -69,6 +64,8 @@ const Header = () => {
     });
   }
 
+  const navLinks = user ? loggedInLinks : publicLinks;
+
   return (
     <header
       className={cn(
@@ -85,7 +82,7 @@ const Header = () => {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          {publicLinks.map((link) => (
+          {navLinks.map((link) => (
             <NavLink
               key={link.label}
               to={link.href}
@@ -100,61 +97,20 @@ const Header = () => {
             </NavLink>
           ))}
 
-          <div className="h-4 w-[1px] bg-slate-700 mx-2" />
-
-          <div className="flex items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-slate-300 hover:text-white">
-                  <Globe className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{t('selectLanguage')}</DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={language} onValueChange={setLanguage}>
-                  <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="es">Espanol</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="de">Deutsch</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="it">Italiano</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="ru">Русский</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="ko">한국어</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="zh">中文</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="ja">日本語</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-slate-300 hover:text-white">
-                  <DollarSign className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{t('selectCurrency')}</DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={currency} onValueChange={setCurrency}>
-                  {Object.values(currencies).map((c) => (
-                    <DropdownMenuRadioItem key={c.name} value={c.name}>
-                      {c.symbol}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-slate-300 hover:text-white">
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
-          </div>
-
           {user ? (
-            <div className="flex items-center gap-2">
+            <>
+              <Button asChild className="bg-[#2563EB] hover:bg-blue-700 text-white rounded-full px-5 shadow-lg shadow-blue-500/20 gap-2">
+                <Link to="/deposit">
+                  <ArrowDownLeft className="h-4 w-4" />
+                  Deposit
+                </Link>
+              </Button>
               <Notifications />
               <ProfileDropdown />
-            </div>
+            </>
           ) : (
             <>
+              <div className="h-4 w-[1px] bg-slate-700 mx-2" />
               <Link to="/login" className="text-sm font-medium text-white hover:text-blue-400 transition-colors">
                 Sign In
               </Link>
@@ -180,7 +136,7 @@ const Header = () => {
             className="fixed inset-0 top-[64px] bg-[#0B0E1E] z-[90] md:hidden px-6 pt-10 overflow-y-auto"
           >
             <div className="flex flex-col gap-6">
-              {publicLinks.map((link) => (
+              {navLinks.map((link) => (
                 <NavLink
                   key={link.label}
                   to={link.href}
@@ -198,6 +154,12 @@ const Header = () => {
 
               {user ? (
                 <>
+                  <Button asChild className="w-full bg-[#2563EB] py-6 text-lg gap-2">
+                    <Link to="/deposit" onClick={closeMobile}>
+                      <ArrowDownLeft className="h-5 w-5" />
+                      Deposit
+                    </Link>
+                  </Button>
                   {userMenuItems.map((item) => (
                     <NavLink
                       key={item.name}
