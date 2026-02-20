@@ -6,7 +6,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import lazyWithPreload from 'react-lazy-with-preload';
-import Sidebar from '@/components/Sidebar';
 import Loader from '@/components/Loader';
 
 const Home = lazyWithPreload(() => import('@/pages/Home'));
@@ -105,7 +104,6 @@ function App() {
   const location = useLocation();
   const isChartingPage = location.pathname.startsWith('/charting');
   const isHomePage = location.pathname === '/';
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -117,23 +115,13 @@ function App() {
     Promise.all([minDelay, windowLoad]).then(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (isSidebarOpen) {
-      setSidebarOpen(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
-
   return (
     <div className={`min-h-screen flex flex-col ${theme} ${isChartingPage ? 'charting-view' : ''}`}>
       <Loader visible={loading} />
       <div className="main-background"></div>
       <div className="main-background-overlay"></div>
       <div className="bg-transparent text-foreground flex-grow relative z-10">
-        {!isChartingPage && <Header onMenuClick={() => setSidebarOpen(true)} />}
-        <AnimatePresence>
-          {isSidebarOpen && <Sidebar onClose={() => setSidebarOpen(false)} />}
-        </AnimatePresence>
+        {!isChartingPage && <Header />}
         <main className={!isChartingPage && !isHomePage ? "pt-20 pb-16 md:pb-0" : ""}>
             <AnimatedRoutes />
         </main>
