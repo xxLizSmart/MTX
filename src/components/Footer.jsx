@@ -9,7 +9,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-slate-900/80 border-t border-border/50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container mx-auto px-6 lg:px-8 py-8 md:py-12">
         <div className="hidden md:grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center space-x-3 mb-4">
@@ -55,6 +55,14 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        <div className="md:hidden flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4">
+          <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center">About</Link>
+          <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center">{t('terms')}</Link>
+          <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center">{t('privacy')}</Link>
+          <a href="mailto:cs.helpdesk@metatradex.net" className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center">Contact</a>
+        </div>
+
         <div className="md:mt-12 md:border-t md:border-border/50 md:pt-8 text-center">
           <p className="text-sm text-muted-foreground">&copy; 2019-{currentYear > 2025 ? currentYear : 2025} MetaTradeX. {t('allRightsReserved')}.</p>
         </div>

@@ -12,7 +12,7 @@ const securityFeatures = [
 const SecuritySection = () => (
   <section className="relative overflow-hidden">
     <div className="absolute inset-0 bg-[#0D1117] pointer-events-none" />
-    <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+    <div className="relative container mx-auto px-6 lg:px-8 py-14 lg:py-28">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -20,7 +20,7 @@ const SecuritySection = () => (
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Your Security Is Our Priority</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">Your Security Is Our Priority</h2>
           <p className="text-[#94A3B8] leading-relaxed mb-8 max-w-lg">
             MetaTradeX employs multiple layers of protection to ensure your assets and personal data remain safe at all times. We never cut corners when it comes to security.
           </p>

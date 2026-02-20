@@ -11,7 +11,7 @@ const stats = [
 
 const TrustBanner = () => (
   <section className="border-y border-[#1E293B] bg-[#0D1117]">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+    <div className="container mx-auto px-6 lg:px-8 py-10 sm:py-12">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
         {stats.map((stat, i) => (
           <motion.div

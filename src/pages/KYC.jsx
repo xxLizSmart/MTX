@@ -99,7 +99,7 @@ const KYC = () => {
     return (
         <>
             <Helmet><title>{t('kyc')} - MetaTradeX</title></Helmet>
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8 flex justify-center">
+            <div className="container mx-auto px-6 py-4 sm:p-6 lg:p-8 flex justify-center">
                 <Card className="w-full max-w-2xl">
                     <CardHeader>
                         <CardTitle className="text-3xl font-bold">KYC Verification</CardTitle>

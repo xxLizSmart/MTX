@@ -27,7 +27,7 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => (
-  <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+  <section className="container mx-auto px-6 lg:px-8 py-14 lg:py-28">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -35,8 +35,8 @@ const TestimonialsSection = () => (
       transition={{ duration: 0.5 }}
       className="text-center mb-14"
     >
-      <h2 className="text-3xl sm:text-4xl font-bold text-white">What Our Users Say</h2>
-      <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto">Trusted by traders and investors worldwide.</p>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">What Our Users Say</h2>
+      <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto text-sm sm:text-base">Trusted by traders and investors worldwide.</p>
     </motion.div>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

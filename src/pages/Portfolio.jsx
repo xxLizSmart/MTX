@@ -107,16 +107,16 @@ const Portfolio = () => {
             <Helmet>
                 <title>{t('portfolio')} - MetaTradeX</title>
             </Helmet>
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+            <div className="container mx-auto px-6 py-4 sm:p-6 lg:p-8">
                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h1 className="text-4xl font-bold tracking-tight">{t('portfolio')}</h1>
-                        <p className="text-muted-foreground mt-2">An overview of your crypto assets and history.</p>
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t('portfolio')}</h1>
+                        <p className="text-muted-foreground mt-2 text-sm sm:text-base">An overview of your crypto assets and history.</p>
                     </div>
-                    <div className="flex gap-2">
-                        <Button onClick={() => navigate('/deposit')}><ArrowDownLeft className="mr-2 h-4 w-4" />{t('deposit')}</Button>
-                        <Button onClick={() => navigate('/withdraw')}><ArrowUpRight className="mr-2 h-4 w-4" />{t('withdraw')}</Button>
-                        <Button variant="outline" onClick={() => navigate('/swap')}><Repeat className="mr-2 h-4 w-4" />{t('swap')}</Button>
+                    <div className="flex flex-wrap gap-2">
+                        <Button className="min-h-[44px]" onClick={() => navigate('/deposit')}><ArrowDownLeft className="mr-2 h-4 w-4" />{t('deposit')}</Button>
+                        <Button className="min-h-[44px]" onClick={() => navigate('/withdraw')}><ArrowUpRight className="mr-2 h-4 w-4" />{t('withdraw')}</Button>
+                        <Button variant="outline" className="min-h-[44px]" onClick={() => navigate('/swap')}><Repeat className="mr-2 h-4 w-4" />{t('swap')}</Button>
                         {userProfile?.is_admin && (
                           <Button variant="secondary" onClick={() => navigate('/admin')}><Shield className="mr-2 h-4 w-4" />Admin</Button>
                         )}
@@ -128,7 +128,7 @@ const Portfolio = () => {
                         <CardTitle className="text-muted-foreground font-normal">Total Portfolio Value</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-5xl font-bold tracking-tight">{loading ? <Loader2 className="h-12 w-12 animate-spin" /> : formatCurrency(getConvertedValue(totalValue))}</p>
+                        <p className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{loading ? <Loader2 className="h-12 w-12 animate-spin" /> : formatCurrency(getConvertedValue(totalValue))}</p>
                     </CardContent>
                 </Card>
                 

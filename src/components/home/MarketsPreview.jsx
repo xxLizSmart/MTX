@@ -28,7 +28,7 @@ const MarketsPreview = () => {
   const { assets } = useTickerData(2000);
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+    <section className="container mx-auto px-6 lg:px-8 py-14 lg:py-28">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -37,8 +37,8 @@ const MarketsPreview = () => {
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10 gap-4"
       >
         <div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Popular Markets</h2>
-          <p className="text-[#94A3B8] mt-2">Track the markets that matter. Trade with confidence.</p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Popular Markets</h2>
+          <p className="text-[#94A3B8] mt-2 text-sm sm:text-base">Track the markets that matter. Trade with confidence.</p>
         </div>
         <Link to="/assets" className="text-[#2563EB] text-sm font-medium hover:text-blue-400 transition-colors inline-flex items-center gap-1.5 shrink-0">
           View all markets <ArrowRight className="w-4 h-4" />

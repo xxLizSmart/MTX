@@ -108,7 +108,7 @@ const Withdraw = () => {
             <Helmet>
                 <title>{t('withdraw')} - MetaTradeX</title>
             </Helmet>
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8 flex justify-center items-center min-h-[calc(100vh-4rem)]">
+            <div className="container mx-auto px-6 py-4 sm:p-6 lg:p-8 flex justify-center items-center min-h-[calc(100vh-4rem)]">
                  <Card className="w-full max-w-lg glassmorphic">
                     <CardHeader>
                         <CardTitle className="text-3xl font-bold">{t('withdraw')}</CardTitle>

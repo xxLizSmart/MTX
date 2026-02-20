@@ -118,7 +118,7 @@ const Deposit = () => {
   return (
     <>
       <Helmet><title>Deposit - MetaTradeX</title></Helmet>
-      <div className="container mx-auto p-4 max-w-2xl">
+      <div className="container mx-auto px-6 py-4 sm:p-4 max-w-2xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-3xl font-bold mb-6">Deposit Funds</h1>
           

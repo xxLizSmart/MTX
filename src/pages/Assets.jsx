@@ -116,7 +116,7 @@ const Assets = () => {
             <Helmet>
                 <title>{t('assets')} - MetaTradeX</title>
             </Helmet>
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+            <div className="container mx-auto px-6 py-4 sm:p-6 lg:p-8">
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <h1 className="text-3xl font-bold">{t('topCryptos')}</h1>
                     <div className="w-full sm:w-auto sm:max-w-xs">

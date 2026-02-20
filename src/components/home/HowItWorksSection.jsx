@@ -26,7 +26,7 @@ const steps = [
 const HowItWorksSection = () => (
   <section className="relative overflow-hidden">
     <div className="absolute inset-0 bg-[#0D1117] pointer-events-none" />
-    <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+    <div className="relative container mx-auto px-6 lg:px-8 py-14 lg:py-28">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -34,8 +34,8 @@ const HowItWorksSection = () => (
         transition={{ duration: 0.5 }}
         className="text-center mb-14"
       >
-        <h2 className="text-3xl sm:text-4xl font-bold text-white">How It Works</h2>
-        <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto">Your seamless journey into crypto trading starts here.</p>
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">How It Works</h2>
+        <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto text-sm sm:text-base">Your seamless journey into crypto trading starts here.</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">

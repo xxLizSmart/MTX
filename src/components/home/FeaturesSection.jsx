@@ -36,7 +36,7 @@ const features = [
 ];
 
 const FeaturesSection = () => (
-  <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+  <section className="container mx-auto px-6 lg:px-8 py-14 lg:py-28">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -44,8 +44,8 @@ const FeaturesSection = () => (
       transition={{ duration: 0.5 }}
       className="text-center mb-14"
     >
-      <h2 className="text-3xl sm:text-4xl font-bold text-white">Why Choose MetaTradeX?</h2>
-      <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto">The ultimate platform for serious traders. Everything you need to succeed in one place.</p>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Why Choose MetaTradeX?</h2>
+      <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto text-sm sm:text-base">The ultimate platform for serious traders. Everything you need to succeed in one place.</p>
     </motion.div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

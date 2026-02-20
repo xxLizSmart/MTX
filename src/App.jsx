@@ -116,7 +116,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme} ${isChartingPage ? 'charting-view' : ''}`}>
+    <div className={`min-h-screen flex flex-col overflow-x-hidden ${theme} ${isChartingPage ? 'charting-view' : ''}`}>
       <Loader visible={loading} />
       <div className="main-background"></div>
       <div className="main-background-overlay"></div>

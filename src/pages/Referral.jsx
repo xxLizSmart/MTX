@@ -78,16 +78,16 @@ const Referral = () => {
     return (
         <>
             <Helmet><title>Referral Program - MetaTradeX</title></Helmet>
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+            <div className="container mx-auto px-6 py-4 sm:p-6 lg:p-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                     className="text-center mb-12"
                 >
-                    <Share2 className="mx-auto h-16 w-16 text-primary mb-4" />
-                    <h1 className="text-5xl font-extrabold tracking-tight gradient-text">Invite & Earn</h1>
-                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                    <Share2 className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-primary mb-4" />
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight gradient-text">Invite & Earn</h1>
+                    <p className="mt-4 text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
                         Share your love for MetaTradeX and earn rewards. Your friends get a sign-up bonus, and you get commission on their trades.
                     </p>
                 </motion.div>

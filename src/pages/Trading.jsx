@@ -211,7 +211,7 @@ const Trading = () => {
                                 {cryptoAssets[activeSymbol]?.icon && <img src={cryptoAssets[activeSymbol].icon} alt={activeSymbol} className="w-8 h-8" />}
                                 <h2 className="text-xl font-bold">{cryptoAssets[activeSymbol]?.name || activeSymbol.toUpperCase()} ({activeSymbol.toUpperCase()})</h2>
                            </div>
-                           <div className="h-[calc(75vh-80px)] w-full">
+                           <div className="h-[50vh] lg:h-[calc(75vh-80px)] w-full">
                                 <TradingViewWidget key={activeSymbol} symbol={activeSymbol} assetType={isStock(activeSymbol) ? 'stock' : 'crypto'} />
                            </div>
                         </Card>
