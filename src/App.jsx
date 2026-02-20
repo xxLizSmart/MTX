@@ -43,8 +43,21 @@ const pageTransition = {
   duration: 0.5
 };
 
+const authRoutes = [Login, Register, ForgotPassword];
+const coreRoutes = [Home, Assets, Trading, Portfolio];
+
 const AnimatedRoutes = () => {
     const location = useLocation();
+
+    useEffect(() => {
+      const path = location.pathname;
+      if (path === '/login' || path === '/register' || path === '/forgot-password') {
+        authRoutes.forEach((r) => r.preload());
+      } else if (path === '/') {
+        coreRoutes.forEach((r) => r.preload());
+      }
+    }, [location.pathname]);
+
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -108,9 +121,6 @@ function App() {
     if (isSidebarOpen) {
       setSidebarOpen(false);
     }
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 

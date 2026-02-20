@@ -1,7 +1,8 @@
 import React from 'react';
-import { Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DotMap from './DotMap';
+
+const LOGO_URL = 'https://horizons-cdn.hostinger.com/911b6dd9-a6dc-482b-b727-f1a7cb5e689b/8e3fab2331b228c8a38bbe45c8541a8d.png';
 
 const AuthLayout = ({ children }) => {
   return (
@@ -15,10 +16,11 @@ const AuthLayout = ({ children }) => {
         <div className="hidden md:block w-1/2 relative overflow-hidden bg-[#0F172A] border-r border-slate-800 min-h-[500px]">
           <DotMap />
           <div className="absolute inset-0 flex flex-col items-center justify-center p-8 z-10 text-center">
-            <div className="h-16 w-16 rounded-2xl bg-[#2563EB] flex items-center justify-center mb-6 shadow-lg shadow-blue-500/50">
-              <Shield className="text-white h-8 w-8" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-2">MTX Trading</h2>
+            <img
+              src={LOGO_URL}
+              alt="MetaTradeX"
+              className="h-20 w-auto mb-6 drop-shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+            />
             <p className="text-slate-400 text-sm max-w-xs">
               Secure access to the world's most advanced asset trading dashboard.
             </p>
