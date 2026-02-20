@@ -1,18 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CRYPTO_PRICES } from '@/lib/cryptoPrices';
+import { useTickerData } from '@/lib/useTickerData';
 
 const formatPrice = (price) =>
   price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const popularAssets = [
-  { symbol: 'BTC', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', price: CRYPTO_PRICES.BTC.price, change: 0.99 },
-  { symbol: 'ETH', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', price: CRYPTO_PRICES.ETH.price, change: -1.23 },
-  { symbol: 'USDC', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', price: CRYPTO_PRICES.USDC.price, change: 0.00 },
-];
-
 const MobileHero = () => {
+  const { assets } = useTickerData(2000);
+  const popularAssets = assets.slice(0, 3);
+
   return (
     <motion.section
       className="relative block sm:hidden w-full overflow-hidden px-4 pt-8 pb-12"
@@ -46,8 +43,8 @@ const MobileHero = () => {
                 <span className="text-white text-sm font-medium">{asset.symbol}</span>
               </div>
               <div className="text-right">
-                <p className="text-white text-sm font-medium">{formatPrice(asset.price)}</p>
-                <p className={`text-xs ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p className="text-white text-sm font-medium transition-all duration-300">{formatPrice(asset.price)}</p>
+                <p className={`text-xs transition-all duration-300 ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                   {asset.change >= 0 ? '+' : ''}{asset.change.toFixed(2)}%
                 </p>
               </div>

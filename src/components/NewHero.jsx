@@ -2,26 +2,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { CRYPTO_PRICES } from '@/lib/cryptoPrices';
-
-const stocksData = [
-  { symbol: 'NVDA', change: -0.04, price: '187.877' },
-];
-
-const tradFiData = [
-  { symbol: 'Gold', change: 0.49, price: '5,023.05' },
-];
-
-const popularAssets = [
-  { symbol: 'BTC', icon: CRYPTO_PRICES.BTC.icon_url, price: CRYPTO_PRICES.BTC.price, change: 0.99 },
-  { symbol: 'ETH', icon: CRYPTO_PRICES.ETH.icon_url, price: CRYPTO_PRICES.ETH.price, change: -1.23 },
-  { symbol: 'XRP', icon: 'https://cryptologos.cc/logos/xrp-xrp-logo.png', price: 1.42, change: -0.46 },
-  { symbol: 'USDC', icon: CRYPTO_PRICES.USDC.icon_url, price: CRYPTO_PRICES.USDC.price, change: 0.00 },
-  { symbol: 'SOL', icon: 'https://cryptologos.cc/logos/solana-sol-logo.png', price: 83.58, change: 1.21 },
-];
+import { useTickerData } from '@/lib/useTickerData';
 
 const formatPrice = (price) =>
   price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const formatPriceCompact = (price) => {
+  if (price >= 1000) return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return price.toFixed(3);
+};
 
 const MiniChart = ({ color = '#22c55e' }) => (
   <svg viewBox="0 0 60 30" className="w-12 h-6" fill="none">
@@ -48,9 +37,15 @@ const GlassCard = ({ children, className = '', delay = 0 }) => (
   </motion.div>
 );
 
+const TickingValue = ({ children, className = '' }) => (
+  <span className={`inline-block transition-all duration-300 ${className}`}>{children}</span>
+);
+
 const NewHero = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const { assets, stock, tradfi } = useTickerData(2000);
+  const popularAssets = assets.slice(0, 5);
 
   const handleStart = (e) => {
     e.preventDefault();
@@ -127,15 +122,17 @@ const NewHero = () => {
               <GlassCard delay={0.2} className="p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white font-semibold text-sm">Stocks</span>
-                  <MiniChart color="#ef4444" />
+                  <MiniChart color={stock.change >= 0 ? '#22c55e' : '#ef4444'} />
                 </div>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-[#94A3B8] text-xs">{stocksData[0].symbol}</span>
-                  <span className={`text-xs ${stocksData[0].change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {stocksData[0].change >= 0 ? '+' : ''}{stocksData[0].change}%
-                  </span>
+                  <span className="text-[#94A3B8] text-xs">{stock.symbol}</span>
+                  <TickingValue className={`text-xs ${stock.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}%
+                  </TickingValue>
                 </div>
-                <p className="text-white text-3xl font-bold tracking-tight">{stocksData[0].price}</p>
+                <TickingValue className="text-white text-3xl font-bold tracking-tight">
+                  {formatPriceCompact(stock.price)}
+                </TickingValue>
                 <Link to="/assets" className="mt-3 text-[#94A3B8] text-xs hover:text-[#2563EB] transition-colors inline-flex items-center gap-1">
                   View <ArrowRight className="w-3 h-3" />
                 </Link>
@@ -144,13 +141,17 @@ const NewHero = () => {
               <GlassCard delay={0.35} className="p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white font-semibold text-sm">TradFi</span>
-                  <MiniChart color="#22c55e" />
+                  <MiniChart color={tradfi.change >= 0 ? '#22c55e' : '#ef4444'} />
                 </div>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-[#94A3B8] text-xs">{tradFiData[0].symbol}</span>
-                  <span className="text-xs text-green-400">+{tradFiData[0].change}%</span>
+                  <span className="text-[#94A3B8] text-xs">{tradfi.symbol}</span>
+                  <TickingValue className={`text-xs ${tradfi.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {tradfi.change >= 0 ? '+' : ''}{tradfi.change.toFixed(2)}%
+                  </TickingValue>
                 </div>
-                <p className="text-white text-3xl font-bold tracking-tight">{tradFiData[0].price}</p>
+                <TickingValue className="text-white text-3xl font-bold tracking-tight">
+                  {formatPriceCompact(tradfi.price)}
+                </TickingValue>
                 <Link to="/assets" className="mt-3 text-[#94A3B8] text-xs hover:text-[#2563EB] transition-colors inline-flex items-center gap-1">
                   View <ArrowRight className="w-3 h-3" />
                 </Link>
@@ -167,10 +168,12 @@ const NewHero = () => {
                       <span className="text-white text-sm font-medium">{asset.symbol}</span>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-white text-sm font-medium">{formatPrice(asset.price)}</p>
-                      <p className={`text-xs ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <TickingValue className="text-white text-sm font-medium">
+                        {formatPrice(asset.price)}
+                      </TickingValue>
+                      <TickingValue className={`block text-xs ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {asset.change >= 0 ? '+' : ''}{asset.change.toFixed(2)}%
-                      </p>
+                      </TickingValue>
                     </div>
                   </div>
                 ))}
