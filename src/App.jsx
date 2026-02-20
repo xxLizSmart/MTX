@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import lazyWithPreload from 'react-lazy-with-preload';
 import Sidebar from '@/components/Sidebar';
+import Loader from '@/components/Loader';
 
 const Home = lazyWithPreload(() => import('@/pages/Home'));
 const Login = lazyWithPreload(() => import('@/pages/Login'));
@@ -92,6 +93,16 @@ function App() {
   const isChartingPage = location.pathname.startsWith('/charting');
   const isHomePage = location.pathname === '/';
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const minDelay = new Promise((r) => setTimeout(r, 2500));
+    const windowLoad = new Promise((r) => {
+      if (document.readyState === 'complete') r();
+      else window.addEventListener('load', r, { once: true });
+    });
+    Promise.all([minDelay, windowLoad]).then(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     if (isSidebarOpen) {
@@ -102,6 +113,7 @@ function App() {
 
   return (
     <div className={`min-h-screen flex flex-col ${theme} ${isChartingPage ? 'charting-view' : ''}`}>
+      <Loader visible={loading} />
       <div className="main-background"></div>
       <div className="main-background-overlay"></div>
       <div className="bg-transparent text-foreground flex-grow relative z-10">
