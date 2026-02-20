@@ -64,8 +64,8 @@ const NewHero = () => {
         <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-blue-500/[0.03] blur-[120px]" />
       </div>
 
-      <div className="relative container mx-auto px-6 lg:px-8 py-10 sm:py-16 lg:py-28 xl:py-32">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-16 xl:gap-20">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-28 xl:py-32">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-6 sm:gap-10 lg:gap-16 xl:gap-20">
 
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -73,21 +73,19 @@ const NewHero = () => {
             transition={{ duration: 0.7 }}
             className="flex flex-col justify-center max-w-xl flex-1"
           >
-            <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] font-bold leading-[1.12] tracking-tight text-white">
-              Beyond crypto.{' '}
-              <br />
-              Trade global assets{' '}
-              <br />
+            <h1 className="text-[1.75rem] sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] font-bold leading-[1.15] tracking-tight text-white">
+              <span className="hidden sm:inline">Beyond crypto.<br /></span>
+              Trade global assets<br className="hidden sm:block" />{' '}
               with USDT.
             </h1>
 
-            <p className="mt-4 sm:mt-6 text-[#94A3B8] text-sm sm:text-lg leading-relaxed">
+            <p className="mt-3 sm:mt-6 text-[#94A3B8] text-sm sm:text-lg leading-relaxed">
               Sign up now to claim a welcome pack worth{' '}
               <span className="text-[#2563EB] font-semibold">6200 USDT</span>
             </p>
 
-            <form onSubmit={handleStart} className="mt-6 sm:mt-8 flex items-center max-w-md">
-              <div className="relative flex-1">
+            <form onSubmit={handleStart} className="mt-5 sm:mt-8 flex items-center max-w-md">
+              <div className="relative flex-1 min-w-0">
                 <input
                   type="text"
                   value={email}
@@ -98,7 +96,7 @@ const NewHero = () => {
               </div>
               <button
                 type="submit"
-                className="h-12 px-5 sm:px-8 rounded-r-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm whitespace-nowrap transition-colors min-h-[44px]"
+                className="h-12 px-5 sm:px-8 rounded-r-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm whitespace-nowrap transition-colors shrink-0"
               >
                 Start now
               </button>
@@ -184,9 +182,9 @@ const NewHero = () => {
             </GlassCard>
           </div>
 
-          <div className="lg:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-3 w-max pb-1">
-              <GlassCard delay={0.2} className="p-4 w-[155px] shrink-0">
+          <div className="lg:hidden mt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <GlassCard delay={0.2} className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white font-semibold text-xs">Stocks</span>
                   <MiniChart color={stock.change >= 0 ? '#22c55e' : '#ef4444'} className="w-10 h-5" />
@@ -202,7 +200,7 @@ const NewHero = () => {
                 </TickingValue>
               </GlassCard>
 
-              <GlassCard delay={0.3} className="p-4 w-[155px] shrink-0">
+              <GlassCard delay={0.3} className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white font-semibold text-xs">TradFi</span>
                   <MiniChart color={tradfi.change >= 0 ? '#22c55e' : '#ef4444'} className="w-10 h-5" />
@@ -217,30 +215,32 @@ const NewHero = () => {
                   {formatPriceCompact(tradfi.price)}
                 </TickingValue>
               </GlassCard>
-
-              <GlassCard delay={0.4} className="p-4 w-[200px] shrink-0">
-                <span className="text-white font-semibold text-xs mb-2.5 block">Popular</span>
-                <div className="space-y-2">
-                  {popularAssets.slice(0, 4).map((asset) => (
-                    <div key={asset.symbol} className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <img src={asset.icon} alt={asset.symbol} className="w-5 h-5 rounded-full shrink-0" />
-                        <span className="text-white text-xs font-medium">{asset.symbol}</span>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-white text-xs font-medium">{formatPrice(asset.price)}</span>
-                        <span className={`block text-[10px] ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {asset.change >= 0 ? '+' : ''}{asset.change.toFixed(2)}%
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Link to="/assets" className="mt-2.5 text-[#94A3B8] text-[10px] hover:text-[#2563EB] transition-colors inline-flex items-center gap-1">
-                  Explore assets <ArrowRight className="w-2.5 h-2.5" />
-                </Link>
-              </GlassCard>
             </div>
+
+            <GlassCard delay={0.4} className="p-4 mt-3">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-white font-semibold text-xs">Popular Assets</span>
+                <Link to="/assets" className="text-[#94A3B8] text-[10px] hover:text-[#2563EB] transition-colors inline-flex items-center gap-1">
+                  View all <ArrowRight className="w-2.5 h-2.5" />
+                </Link>
+              </div>
+              <div className="space-y-2.5">
+                {popularAssets.slice(0, 4).map((asset) => (
+                  <div key={asset.symbol} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img src={asset.icon} alt={asset.symbol} className="w-5 h-5 rounded-full shrink-0" />
+                      <span className="text-white text-xs font-medium">{asset.symbol}</span>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-white text-xs font-medium">{formatPrice(asset.price)}</span>
+                      <span className={`block text-[10px] ${asset.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {asset.change >= 0 ? '+' : ''}{asset.change.toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
           </div>
 
         </div>
