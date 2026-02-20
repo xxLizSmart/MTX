@@ -108,6 +108,9 @@ function App() {
     if (isSidebarOpen) {
       setSidebarOpen(false);
     }
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
