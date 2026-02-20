@@ -64,7 +64,7 @@ const NewHero = () => {
         <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-blue-500/[0.03] blur-[120px]" />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-28 xl:py-32">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 sm:pt-28 sm:pb-16 lg:pt-36 lg:pb-28 xl:pt-40 xl:pb-32">
         <div className="flex flex-col lg:flex-row lg:items-center gap-6 sm:gap-10 lg:gap-16 xl:gap-20">
 
           <motion.div
