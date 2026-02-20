@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, X, RefreshCw, Eye, Edit, User, DollarSign, Shield, FileText, Settings, Key } from 'lucide-react';
+import { UserCards, RequestCards, KYCCards, TradeSettingCards } from '@/components/admin/MobileCards';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -280,194 +281,236 @@ const Admin = () => {
   };
 
   const renderUsers = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>KYC</TableHead>
-          <TableHead>Trade Override</TableHead>
-          <TableHead>Joined</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.users.map(user => (
-          <TableRow key={user.id}>
-            <TableCell>{user.first_name || 'N/A'} {user.last_name || ''}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>{user.is_admin ? <Badge className="bg-purple-600">Admin</Badge> : <Badge variant="outline">User</Badge>}</TableCell>
-            <TableCell>{getStatusBadge(user.kyc_status)}</TableCell>
-            <TableCell>{user.trade_override_status ? getStatusBadge(user.trade_override_status) : <Badge variant="outline">Off</Badge>}</TableCell>
-            <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-            <TableCell>
-              <Button variant="ghost" size="icon" onClick={() => handleOpenUserEdit(user)}><Edit className="h-4 w-4" /></Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>KYC</TableHead>
+              <TableHead>Trade Override</TableHead>
+              <TableHead>Joined</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.users.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>{user.first_name || 'N/A'} {user.last_name || ''}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.is_admin ? <Badge className="bg-purple-600">Admin</Badge> : <Badge variant="outline">User</Badge>}</TableCell>
+                <TableCell>{getStatusBadge(user.kyc_status)}</TableCell>
+                <TableCell>{user.trade_override_status ? getStatusBadge(user.trade_override_status) : <Badge variant="outline">Off</Badge>}</TableCell>
+                <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="icon" onClick={() => handleOpenUserEdit(user)}><Edit className="h-4 w-4" /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="md:hidden">
+        <UserCards users={data.users} getStatusBadge={getStatusBadge} onEdit={handleOpenUserEdit} />
+      </div>
+    </>
   );
   
   const renderRequests = (items, type) => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>User</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Amount</TableHead>
-          <TableHead>Status</TableHead>
-          {type === 'deposits' && <TableHead>Proof</TableHead>}
-          {type === 'withdrawals' && <TableHead>Address</TableHead>}
-          <TableHead>Date</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {items.map(item => (
-          <TableRow key={item.id}>
-            <TableCell>{item.users?.first_name || 'N/A'} {item.users?.last_name || ''}</TableCell>
-            <TableCell>{item.users?.email}</TableCell>
-            <TableCell>{item.amount} {item.currency}</TableCell>
-            <TableCell>{getStatusBadge(item.status)}</TableCell>
-            {type === 'deposits' && (
-              <TableCell>
-                {item.proof_url && (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="icon" onClick={() => setSelectedImage(item.proof_url)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                  </Dialog>
+    <>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Status</TableHead>
+              {type === 'deposits' && <TableHead>Proof</TableHead>}
+              {type === 'withdrawals' && <TableHead>Address</TableHead>}
+              <TableHead>Date</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map(item => (
+              <TableRow key={item.id}>
+                <TableCell>{item.users?.first_name || 'N/A'} {item.users?.last_name || ''}</TableCell>
+                <TableCell>{item.users?.email}</TableCell>
+                <TableCell>{item.amount} {item.currency}</TableCell>
+                <TableCell>{getStatusBadge(item.status)}</TableCell>
+                {type === 'deposits' && (
+                  <TableCell>
+                    {item.proof_url && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="icon" onClick={() => setSelectedImage(item.proof_url)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
+                    )}
+                  </TableCell>
                 )}
-              </TableCell>
-            )}
-            {type === 'withdrawals' && <TableCell className="truncate max-w-[150px]">{item.wallet_address}</TableCell>}
-            <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
-            <TableCell className="space-x-2">
-              {item.status === 'pending' && (
-                <>
-                  <Button size="icon" variant="ghost" className="text-green-500" onClick={() => handleUpdateStatus(type, item.id, 'approved', { userId: item.user_id, amount: item.amount, currency: item.currency })}>
-                    <Check className="h-4 w-4"/>
-                  </Button>
-                  <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleUpdateStatus(type, item.id, 'rejected', { userId: item.user_id, amount: item.amount, currency: item.currency })}>
-                    <X className="h-4 w-4"/>
-                  </Button>
-                </>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                {type === 'withdrawals' && <TableCell className="truncate max-w-[150px]">{item.wallet_address}</TableCell>}
+                <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
+                <TableCell className="space-x-2">
+                  {item.status === 'pending' && (
+                    <>
+                      <Button size="icon" variant="ghost" className="text-green-500" onClick={() => handleUpdateStatus(type, item.id, 'approved', { userId: item.user_id, amount: item.amount, currency: item.currency })}>
+                        <Check className="h-4 w-4"/>
+                      </Button>
+                      <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleUpdateStatus(type, item.id, 'rejected', { userId: item.user_id, amount: item.amount, currency: item.currency })}>
+                        <X className="h-4 w-4"/>
+                      </Button>
+                    </>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="md:hidden">
+        <RequestCards items={items} type={type} getStatusBadge={getStatusBadge} onUpdateStatus={handleUpdateStatus} onViewProof={setSelectedImage} loading={loading} />
+      </div>
+    </>
   );
 
   const renderKYC = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Country</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Document</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.kyc.map(user => (
-          <TableRow key={user.id}>
-            <TableCell>{user.first_name} {user.last_name}</TableCell>
-            <TableCell>{user.email || 'N/A'}</TableCell>
-            <TableCell>{user.country || 'N/A'}</TableCell>
-            <TableCell>{getStatusBadge(user.kyc_status)}</TableCell>
-            <TableCell>
-              {user.id_document_url && (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" onClick={() => setSelectedImage(user.id_document_url)}>
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                </Dialog>
-              )}
-            </TableCell>
-            <TableCell className="space-x-2">
-              {user.kyc_status === 'pending' && (
-                <>
-                  <Button size="icon" variant="ghost" className="text-green-500" onClick={() => handleUpdateStatus('profiles', user.id, 'approved', { kyc: true })}>
-                    <Check className="h-4 w-4"/>
-                  </Button>
-                  <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleUpdateStatus('profiles', user.id, 'rejected', { kyc: true })}>
-                    <X className="h-4 w-4"/>
-                  </Button>
-                </>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Country</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Document</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.kyc.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>{user.first_name} {user.last_name}</TableCell>
+                <TableCell>{user.email || 'N/A'}</TableCell>
+                <TableCell>{user.country || 'N/A'}</TableCell>
+                <TableCell>{getStatusBadge(user.kyc_status)}</TableCell>
+                <TableCell>
+                  {user.id_document_url && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="icon" onClick={() => setSelectedImage(user.id_document_url)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+                  )}
+                </TableCell>
+                <TableCell className="space-x-2">
+                  {user.kyc_status === 'pending' && (
+                    <>
+                      <Button size="icon" variant="ghost" className="text-green-500" onClick={() => handleUpdateStatus('profiles', user.id, 'approved', { kyc: true })}>
+                        <Check className="h-4 w-4"/>
+                      </Button>
+                      <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleUpdateStatus('profiles', user.id, 'rejected', { kyc: true })}>
+                        <X className="h-4 w-4"/>
+                      </Button>
+                    </>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="md:hidden">
+        <KYCCards users={data.kyc} getStatusBadge={getStatusBadge} onUpdateStatus={handleUpdateStatus} onViewDoc={setSelectedImage} loading={loading} />
+      </div>
+    </>
   );
 
   const renderTradeSettings = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Duration (s)</TableHead>
-          <TableHead>Win Rate (%)</TableHead>
-          <TableHead>Loss Rate (%)</TableHead>
-          <TableHead>Min Capital</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.tradeSettings.map(setting => (
-          <TableRow key={setting.id}>
-            <TableCell>{setting.duration}</TableCell>
-            <TableCell>{(setting.win_rate * 100).toFixed(2)}</TableCell>
-            <TableCell>{(setting.loss_rate * 100).toFixed(2)}</TableCell>
-            <TableCell>{setting.min_capital}</TableCell>
-            <TableCell>
-              <Button size="icon" variant="ghost" onClick={() => setEditSetting(setting)}><Edit className="h-4 w-4"/></Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Duration (s)</TableHead>
+              <TableHead>Win Rate (%)</TableHead>
+              <TableHead>Loss Rate (%)</TableHead>
+              <TableHead>Min Capital</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.tradeSettings.map(setting => (
+              <TableRow key={setting.id}>
+                <TableCell>{setting.duration}</TableCell>
+                <TableCell>{(setting.win_rate * 100).toFixed(2)}</TableCell>
+                <TableCell>{(setting.loss_rate * 100).toFixed(2)}</TableCell>
+                <TableCell>{setting.min_capital}</TableCell>
+                <TableCell>
+                  <Button size="icon" variant="ghost" onClick={() => setEditSetting(setting)}><Edit className="h-4 w-4"/></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="md:hidden">
+        <TradeSettingCards settings={data.tradeSettings} onEdit={setEditSetting} />
+      </div>
+    </>
   );
 
   return (
     <>
       <Helmet><title>Admin Panel - MetaTradeX</title></Helmet>
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-wrap justify-between items-center gap-4 mb-6">
-          <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <Button onClick={fetchData} disabled={loading} variant="outline" size="icon"><RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /></Button>
+      <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex items-center justify-between gap-4 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">Admin Panel</h1>
+          <Button onClick={fetchData} disabled={loading} variant="outline" size="icon" className="shrink-0">
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </Button>
         </motion.div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 mb-4">
-            <TabsTrigger value="users"><User className="w-4 h-4 mr-2"/>Users</TabsTrigger>
-            <TabsTrigger value="deposits"><DollarSign className="w-4 h-4 mr-2"/>Deposits</TabsTrigger>
-            <TabsTrigger value="withdrawals"><DollarSign className="w-4 h-4 mr-2"/>Withdrawals</TabsTrigger>
-            <TabsTrigger value="kyc"><FileText className="w-4 h-4 mr-2"/>KYC</TabsTrigger>
-            <TabsTrigger value="settings"><Settings className="w-4 h-4 mr-2"/>Trading</TabsTrigger>
-          </TabsList>
-          <motion.div key={activeTab} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.3 }} className="overflow-x-auto">
-            <TabsContent value="users">{loading ? <p>Loading...</p> : renderUsers()}</TabsContent>
-            <TabsContent value="deposits">{loading ? <p>Loading...</p> : renderRequests(data.deposits, 'deposits')}</TabsContent>
-            <TabsContent value="withdrawals">{loading ? <p>Loading...</p> : renderRequests(data.withdrawals, 'withdrawals')}</TabsContent>
-            <TabsContent value="kyc">{loading ? <p>Loading...</p> : renderKYC()}</TabsContent>
-            <TabsContent value="settings">{loading ? <p>Loading...</p> : renderTradeSettings()}</TabsContent>
+          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide">
+            <TabsList className="inline-flex w-auto min-w-full sm:w-full sm:grid sm:grid-cols-5 mb-4 h-auto p-1">
+              <TabsTrigger value="users" className="gap-1.5 px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
+                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />Users
+              </TabsTrigger>
+              <TabsTrigger value="deposits" className="gap-1.5 px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
+                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />Deposits
+              </TabsTrigger>
+              <TabsTrigger value="withdrawals" className="gap-1.5 px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
+                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />Withdrawals
+              </TabsTrigger>
+              <TabsTrigger value="kyc" className="gap-1.5 px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />KYC
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-1.5 px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
+                <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />Trading
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            <TabsContent value="users">{loading ? <p className="text-center py-8 text-muted-foreground">Loading...</p> : renderUsers()}</TabsContent>
+            <TabsContent value="deposits">{loading ? <p className="text-center py-8 text-muted-foreground">Loading...</p> : renderRequests(data.deposits, 'deposits')}</TabsContent>
+            <TabsContent value="withdrawals">{loading ? <p className="text-center py-8 text-muted-foreground">Loading...</p> : renderRequests(data.withdrawals, 'withdrawals')}</TabsContent>
+            <TabsContent value="kyc">{loading ? <p className="text-center py-8 text-muted-foreground">Loading...</p> : renderKYC()}</TabsContent>
+            <TabsContent value="settings">{loading ? <p className="text-center py-8 text-muted-foreground">Loading...</p> : renderTradeSettings()}</TabsContent>
           </motion.div>
         </Tabs>
       </div>
 
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Document Viewer</DialogTitle></DialogHeader>
           {selectedImage && <img src={selectedImage} alt="KYC or Deposit Proof" className="max-w-full h-auto rounded-md" />}
           <DialogFooter>
@@ -478,42 +521,45 @@ const Admin = () => {
       </Dialog>
 
       <Dialog open={!!editUser} onOpenChange={() => setEditUser(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader><DialogTitle>Edit User: {editUser?.first_name} {editUser?.last_name}</DialogTitle><DialogDescription>Manage user balances and trade outcomes.</DialogDescription></DialogHeader>
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-base sm:text-lg pr-6">Edit User: {editUser?.first_name} {editUser?.last_name}</DialogTitle>
+            <DialogDescription>Manage user balances and trade outcomes.</DialogDescription>
+          </DialogHeader>
           <div className="py-4 space-y-4">
-            
-            <div className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
-               <div className="flex items-center gap-2">
-                   <Key className="h-4 w-4 text-purple-600"/>
-                   <div className="space-y-0.5">
-                       <Label className="text-base">Admin Status</Label>
-                       <p className="text-xs text-muted-foreground">Grant full administrative access to this user.</p>
+
+            <div className="flex items-center justify-between gap-3 p-3 border rounded-md bg-muted/50">
+               <div className="flex items-center gap-2 min-w-0">
+                   <Key className="h-4 w-4 text-purple-600 shrink-0"/>
+                   <div className="space-y-0.5 min-w-0">
+                       <Label className="text-sm sm:text-base">Admin Status</Label>
+                       <p className="text-[10px] sm:text-xs text-muted-foreground">Grant full administrative access.</p>
                    </div>
                </div>
                <Switch checked={editUser?.is_admin} onCheckedChange={() => handleToggleAdmin(editUser.id, editUser.is_admin)} disabled={loading} />
             </div>
 
-            <h3 className="font-semibold">Balances</h3>
-            {loading ? <p>Loading balances...</p> : userBalances.map(balance => (
+            <h3 className="font-semibold text-sm">Balances</h3>
+            {loading ? <p className="text-sm text-muted-foreground">Loading balances...</p> : userBalances.map(balance => (
               <div key={balance.id} className="flex items-center gap-2">
-                <Label className="w-20">{balance.symbol}</Label>
+                <Label className="w-16 sm:w-20 text-xs sm:text-sm shrink-0">{balance.symbol}</Label>
                 <Input type="number" defaultValue={balance.amount} onBlur={(e) => handleUpdateUserBalance(balance.id, e.target.value)} />
               </div>
             ))}
             <div className="flex items-center gap-2 pt-2">
-              <Input placeholder="Symbol (e.g. BTC)" value={newBalanceSymbol} onChange={(e) => setNewBalanceSymbol(e.target.value)} className="w-40" />
-              <Button variant="outline" size="sm" onClick={handleAddBalance} disabled={!newBalanceSymbol.trim()}>Add Balance</Button>
+              <Input placeholder="Symbol (e.g. BTC)" value={newBalanceSymbol} onChange={(e) => setNewBalanceSymbol(e.target.value)} className="flex-1 min-w-0" />
+              <Button variant="outline" size="sm" onClick={handleAddBalance} disabled={!newBalanceSymbol.trim()} className="shrink-0 whitespace-nowrap">Add</Button>
             </div>
-            <h3 className="font-semibold pt-4">Trade Control</h3>
-             <div className="p-3 rounded-md border bg-background/50 space-y-2">
+            <h3 className="font-semibold text-sm pt-4">Trade Control</h3>
+             <div className="p-3 rounded-md border bg-background/50 space-y-3">
                <div className="flex justify-between items-center">
-                 <Label>Current Status:</Label>
+                 <Label className="text-sm">Current Status:</Label>
                  {editUser?.trade_override_status ? getStatusBadge(editUser.trade_override_status) : <Badge variant="outline">OFF</Badge>}
                </div>
                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                 <Button variant="success" className="bg-green-500" onClick={() => handleTradeOverrideSwitch(editUser.id, 'win')} disabled={loading || editUser?.trade_override_status === 'win'}>Switch Win ON</Button>
-                 <Button variant="destructive" onClick={() => handleTradeOverrideSwitch(editUser.id, 'loss')} disabled={loading || editUser?.trade_override_status === 'loss'}>Switch Loss ON</Button>
-                 <Button variant="outline" onClick={() => handleTradeOverrideSwitch(editUser.id, null)} disabled={loading || !editUser?.trade_override_status}>Switch OFF</Button>
+                 <Button variant="success" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => handleTradeOverrideSwitch(editUser.id, 'win')} disabled={loading || editUser?.trade_override_status === 'win'}>Win ON</Button>
+                 <Button variant="destructive" onClick={() => handleTradeOverrideSwitch(editUser.id, 'loss')} disabled={loading || editUser?.trade_override_status === 'loss'}>Loss ON</Button>
+                 <Button variant="outline" onClick={() => handleTradeOverrideSwitch(editUser.id, null)} disabled={loading || !editUser?.trade_override_status}>OFF</Button>
               </div>
             </div>
           </div>
@@ -522,12 +568,21 @@ const Admin = () => {
       </Dialog>
 
       <Dialog open={!!editSetting} onOpenChange={() => setEditSetting(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-[95vw] sm:max-w-lg">
           <DialogHeader><DialogTitle>Edit Setting for {editSetting?.duration}s</DialogTitle></DialogHeader>
           {editSetting && (<div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="win_rate" className="text-right">Win Rate (%)</Label><Input id="win_rate" type="number" value={editSetting.win_rate * 100} onChange={(e) => setEditSetting({...editSetting, win_rate: parseFloat(e.target.value) / 100})} className="col-span-3"/></div>
-            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="loss_rate" className="text-right">Loss Rate (%)</Label><Input id="loss_rate" type="number" value={editSetting.loss_rate * 100} onChange={(e) => setEditSetting({...editSetting, loss_rate: parseFloat(e.target.value) / 100})} className="col-span-3"/></div>
-            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="min_capital" className="text-right">Min Capital</Label><Input id="min_capital" type="number" value={editSetting.min_capital} onChange={(e) => setEditSetting({...editSetting, min_capital: parseFloat(e.target.value)})} className="col-span-3"/></div>
+            <div className="space-y-2 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4 sm:space-y-0">
+              <Label htmlFor="win_rate" className="text-sm sm:text-right">Win Rate (%)</Label>
+              <Input id="win_rate" type="number" value={editSetting.win_rate * 100} onChange={(e) => setEditSetting({...editSetting, win_rate: parseFloat(e.target.value) / 100})} className="sm:col-span-3"/>
+            </div>
+            <div className="space-y-2 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4 sm:space-y-0">
+              <Label htmlFor="loss_rate" className="text-sm sm:text-right">Loss Rate (%)</Label>
+              <Input id="loss_rate" type="number" value={editSetting.loss_rate * 100} onChange={(e) => setEditSetting({...editSetting, loss_rate: parseFloat(e.target.value) / 100})} className="sm:col-span-3"/>
+            </div>
+            <div className="space-y-2 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4 sm:space-y-0">
+              <Label htmlFor="min_capital" className="text-sm sm:text-right">Min Capital</Label>
+              <Input id="min_capital" type="number" value={editSetting.min_capital} onChange={(e) => setEditSetting({...editSetting, min_capital: parseFloat(e.target.value)})} className="sm:col-span-3"/>
+            </div>
           </div>)}
           <DialogFooter><Button onClick={handleUpdateTradeSetting} disabled={loading}>{loading ? "Saving..." : "Save Changes"}</Button></DialogFooter>
         </DialogContent>
