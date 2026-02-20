@@ -96,7 +96,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const minDelay = new Promise((r) => setTimeout(r, 2500));
+    const minDelay = new Promise((r) => setTimeout(r, 2000));
     const windowLoad = new Promise((r) => {
       if (document.readyState === 'complete') r();
       else window.addEventListener('load', r, { once: true });

@@ -178,60 +178,58 @@
 }
 
 /* Preloader */
-.loader-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+.loader-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: #0B0E1E;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #0B0E1E;
+  z-index: 9999;
   transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-.loader-visible {
+.loader-container.loader-visible {
   opacity: 1;
   visibility: visible;
 }
 
-.loader-hidden {
+.loader-container.loader-fade-out {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.loader-text {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
+.loader {
+  position: relative;
   overflow: hidden;
-  width: 0;
-  background: linear-gradient(90deg, #94A3B8, #2563EB);
+  border-right: 3px solid #2563EB;
+  width: 0px;
+  white-space: nowrap;
+  animation: typewriter 2s steps(11) infinite alternate, blink 0.5s steps(10) infinite;
+}
+
+.loader-text {
+  font-size: 40px;
+  font-weight: 700;
+  background: linear-gradient(to right, #94A3B8, #2563EB);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  border-right: 3px solid #2563EB;
-  animation: typewriter 1.8s steps(11) infinite alternate, blink-cursor 0.6s step-end infinite;
+  font-family: sans-serif;
 }
 
 @keyframes typewriter {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 11ch;
-  }
+  0% { width: 0px; }
+  100% { width: 260px; }
 }
 
-@keyframes blink-cursor {
-  0%, 100% {
-    border-color: #2563EB;
-  }
-  50% {
-    border-color: transparent;
-  }
+@keyframes blink {
+  0%, 100% { border-right-color: #2563EB; }
+  50% { border-right-color: transparent; }
 }
 
 /* Hide Tawk.to chat on mobile */
