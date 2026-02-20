@@ -191,6 +191,40 @@ export const AuthProvider = ({ children }) => {
     return { data, error };
   }, [toast]);
 
+  const uploadAvatar = useCallback(async (file) => {
+    if (!user) return { error: { message: 'Not authenticated' } };
+
+    const fileExt = file.name.split('.').pop();
+    const filePath = `${user.id}/avatar.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ variant: 'destructive', title: 'Upload Failed', description: uploadError.message });
+      return { error: uploadError };
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: avatarUrl })
+      .eq('id', user.id);
+
+    if (updateError) {
+      toast({ variant: 'destructive', title: 'Update Failed', description: updateError.message });
+      return { error: updateError };
+    }
+
+    setUserProfile((prev) => prev ? { ...prev, avatar_url: avatarUrl } : prev);
+    return { data: { avatar_url: avatarUrl } };
+  }, [user, toast]);
 
   const value = useMemo(() => ({
     user,
@@ -202,8 +236,9 @@ export const AuthProvider = ({ children }) => {
     signInWithPhone,
     signOut,
     sendPasswordResetEmail,
-    updateUserPassword
-  }), [user, userProfile, session, loading, signUp, signIn, signInWithPhone, signOut, sendPasswordResetEmail, updateUserPassword]);
+    updateUserPassword,
+    uploadAvatar,
+  }), [user, userProfile, session, loading, signUp, signIn, signInWithPhone, signOut, sendPasswordResetEmail, updateUserPassword, uploadAvatar]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

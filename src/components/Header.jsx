@@ -16,6 +16,7 @@ import {
   DropdownMenuRadioGroup, DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu';
 import Notifications from '@/components/Notifications';
+import ProfileDropdown from '@/components/ProfileDropdown';
 import { cn } from '@/lib/utils';
 
 function useScroll(threshold) {
@@ -150,31 +151,7 @@ const Header = () => {
           {user ? (
             <div className="flex items-center gap-2">
               <Notifications />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      alt="User Profile Avatar"
-                      src="https://horizons-cdn.hostinger.com/911b6dd9-a6dc-482b-b727-f1a7cb5e689b/f690e1d0d93b0b867b2388f44b298f21.png"
-                    />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel className="truncate">{user.email || user.phone}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {userMenuItems.map((item) => (
-                    <DropdownMenuItem key={item.name} onClick={() => navigate(item.path)}>
-                      {item.icon}<span>{item.name}</span>
-                    </DropdownMenuItem>
-                  ))}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>{t('logout')}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ProfileDropdown />
             </div>
           ) : (
             <>
