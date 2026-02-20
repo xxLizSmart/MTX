@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import TransactionsHistory from '@/components/TransactionsHistory';
+import { CRYPTO_PRICES } from '@/lib/cryptoPrices';
 
 const Portfolio = () => {
     const { t } = useLanguage();
@@ -38,10 +39,13 @@ const Portfolio = () => {
             if (balanceError) throw balanceError;
             if (assetsError) throw assetsError;
 
-            const prices = (assetsData || []).reduce((acc, asset) => {
-                acc[asset.symbol] = { price: asset.price, icon: asset.icon_url, name: asset.name };
+            const prices = Object.entries(CRYPTO_PRICES).reduce((acc, [symbol, data]) => {
+                acc[symbol] = { price: data.price, icon: data.icon_url, name: data.name };
                 return acc;
             }, {});
+            (assetsData || []).forEach(asset => {
+                prices[asset.symbol] = { price: asset.price, icon: asset.icon_url, name: asset.name };
+            });
 
             let totalPortfolioValueUSD = 0;
             const portfolioAssets = (balances || []).map(balance => {

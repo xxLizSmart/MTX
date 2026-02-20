@@ -10,6 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRightLeft, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
+import { CRYPTO_PRICES } from '@/lib/cryptoPrices';
+
+const DEFAULT_CRYPTOS = Object.entries(CRYPTO_PRICES).map(([symbol, data]) => ({
+    symbol,
+    name: data.name,
+    price: data.price,
+    icon_url: data.icon_url,
+}));
 
 const CoinSwapper = () => {
     const { t } = useLanguage();
@@ -37,10 +45,11 @@ const CoinSwapper = () => {
             if (assetsError) throw assetsError;
             if (balancesError) throw balancesError;
 
-            setCryptos(assetsData);
-            if (assetsData.length > 1) {
-                setFromCoin(assetsData[0].symbol);
-                setToCoin(assetsData[1].symbol);
+            const assets = assetsData && assetsData.length > 0 ? assetsData : DEFAULT_CRYPTOS;
+            setCryptos(assets);
+            if (assets.length > 1 && !fromCoin) {
+                setFromCoin(assets[0].symbol);
+                setToCoin(assets[1].symbol);
             }
 
             const balancesMap = balancesData.reduce((acc, bal) => {

@@ -12,6 +12,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Loader2, Edit } from 'lucide-react';
+import { CRYPTO_PRICES } from '@/lib/cryptoPrices';
+
+const DEFAULT_ASSETS = Object.entries(CRYPTO_PRICES).map(([symbol, data]) => ({
+    symbol,
+    name: data.name,
+    price: data.price,
+    icon_url: data.icon_url,
+    price_change_percentage_24h: 0,
+}));
 
 const Assets = () => {
     const { t } = useLanguage();
@@ -25,19 +34,41 @@ const Assets = () => {
     const [editingAsset, setEditingAsset] = useState(null);
     const [newPrice, setNewPrice] = useState('');
 
+    const seedAssets = useCallback(async () => {
+        const toInsert = DEFAULT_ASSETS.map(a => ({
+            symbol: a.symbol,
+            name: a.name,
+            price: a.price,
+            icon_url: a.icon_url,
+            price_change_percentage_24h: 0,
+        }));
+        const { error } = await supabase.from('assets').insert(toInsert);
+        return !error;
+    }, []);
+
     const fetchAssets = useCallback(async () => {
         setLoading(true);
         try {
             const { data, error } = await supabase.from('assets').select('*').order('id');
             if (error) throw error;
-            setCryptos(data);
+
+            if ((!data || data.length === 0) && userProfile?.is_admin) {
+                const seeded = await seedAssets();
+                if (seeded) {
+                    const { data: refreshed } = await supabase.from('assets').select('*').order('id');
+                    setCryptos(refreshed || DEFAULT_ASSETS);
+                    return;
+                }
+            }
+
+            setCryptos(data && data.length > 0 ? data : DEFAULT_ASSETS);
         } catch (error) {
             console.error("Error fetching assets:", error);
-            toast({ variant: 'destructive', title: 'Failed to fetch assets', description: error.message });
+            setCryptos(DEFAULT_ASSETS);
         } finally {
             setLoading(false);
         }
-    }, [toast]);
+    }, [toast, userProfile, seedAssets]);
 
     useEffect(() => {
         fetchAssets();

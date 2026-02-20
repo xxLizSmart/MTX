@@ -15,6 +15,7 @@ import { Loader2, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
 import TransactionsHistory from '@/components/TransactionsHistory';
 import TradingViewWidget from '@/components/charts/TradingViewWidget';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { CRYPTO_PRICES } from '@/lib/cryptoPrices';
 
 const Trading = () => {
     const { symbol = 'btc' } = useParams();
@@ -55,10 +56,13 @@ const Trading = () => {
             if (assetsError) throw new Error(`Assets Error: ${assetsError.message}`);
             if (settingsError && settingsError.code !== '42P01') throw new Error(`Settings Error: ${settingsError.message}`);
 
-            const assetsMap = (assetsData || []).reduce((acc, asset) => {
-                acc[asset.symbol.toLowerCase()] = { name: asset.name, price: asset.price, icon: asset.icon_url };
+            const assetsMap = Object.entries(CRYPTO_PRICES).reduce((acc, [sym, data]) => {
+                acc[sym.toLowerCase()] = { name: data.name, price: data.price, icon: data.icon_url };
                 return acc;
             }, {});
+            (assetsData || []).forEach(asset => {
+                assetsMap[asset.symbol.toLowerCase()] = { name: asset.name, price: asset.price, icon: asset.icon_url };
+            });
             setCryptoAssets(assetsMap);
 
             const settingsMap = (settingsData || []).reduce((acc, setting) => {

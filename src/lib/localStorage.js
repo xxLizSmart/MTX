@@ -52,35 +52,35 @@ export const initializeDefaultData = () => {
     storage.set(STORAGE_KEYS.ASSETS, [
       {
         id: 1,
-        symbol: 'btc',
+        symbol: 'BTC',
         name: 'Bitcoin',
-        price: 45000,
+        price: 67281.30,
         icon_url: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
-        price_change_percentage_24h: 2.5
+        price_change_percentage_24h: 0
       },
       {
         id: 2,
-        symbol: 'eth',
+        symbol: 'ETH',
         name: 'Ethereum',
-        price: 2500,
+        price: 1954.37,
         icon_url: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-        price_change_percentage_24h: 1.8
+        price_change_percentage_24h: 0
       },
       {
         id: 3,
-        symbol: 'usdt',
+        symbol: 'USDT',
         name: 'Tether',
-        price: 1,
+        price: 0.9994,
         icon_url: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
-        price_change_percentage_24h: 0.1
+        price_change_percentage_24h: 0
       },
       {
         id: 4,
-        symbol: 'bnb',
-        name: 'Binance Coin',
-        price: 320,
-        icon_url: 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-        price_change_percentage_24h: 3.2
+        symbol: 'USDC',
+        name: 'USD Coin',
+        price: 1.012,
+        icon_url: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+        price_change_percentage_24h: 0
       }
     ]);
   }
